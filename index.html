@@ -5430,20 +5430,7 @@
 
   // iOS only accepts a PNG home-screen icon, so draw one to match icon.svg.
   (function makeAppleIcon() {
-    const cv = document.createElement('canvas');
-    cv.width = cv.height = 180;
-    const c = cv.getContext('2d');
-    c.fillStyle = '#050505'; c.fillRect(0, 0, 180, 180);
-    c.save(); c.translate(90, 82); c.rotate(-.31);
-    c.fillStyle = '#f2f2f2'; c.fillRect(-58, -22, 34, 44);
-    c.fillStyle = '#7d0009'; c.fillRect(-28, -25, 9, 50);
-    c.fillStyle = '#e10613';
-    c.beginPath(); c.ellipse(16, 0, 44, 35, 0, 0, Math.PI * 2); c.fill();
-    c.beginPath(); c.ellipse(2, 31, 23, 13, 0, 0, Math.PI * 2); c.fill();
-    c.restore();
-    c.fillStyle = '#fff'; c.font = '400 22px Impact, "Arial Black", sans-serif'; c.textAlign = 'center';
-    c.fillText('LAST ROUND', 90, 164);
-    try { document.getElementById('appleIcon').href = cv.toDataURL('image/png'); } catch {}
+    try { document.getElementById('appleIcon').href = './icon-512.png'; } catch {}
   })();
 
   // Boot
