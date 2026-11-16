@@ -1668,17 +1668,17 @@
 
   // Each character changes movement, resilience, impact and silhouette, not just its name.
   const CHARACTERS = {
-    // skin: palette key, hair: 0 shaved / 1 short crop / 2 high-top, trunks: [base, highlight, shadow]
-    shadow: { name: 'MANQ', title: 'South African Contender', mark: 'MQ', color: '#f1ede4', skin: 'brown', hair: 1, buildX: 1.00, buildY: 1.00, trunks: ['#dedad2', '#ffffff', '#8f8b84'], speed: 1, mass: 1, power: 1, jump: 1, maxHp: 100 },
-    akane:  { name: 'RICO VEGA', title: 'Counter-Puncher', mark: 'RV', color: '#34d399', skin: 'tan', hair: 2, buildX: .91, buildY: 1.03, trunks: ['#157a55', '#4fe0a6', '#083a28'], speed: 1.2, mass: .82, power: .92, jump: 1, maxHp: 88 },
-    raiden: { name: 'VOLKOV', title: 'Technical Out-Boxer', mark: 'VK', color: '#38bdf8', skin: 'light', hair: 1, buildX: .90, buildY: 1.04, trunks: ['#1f5fae', '#79b8ff', '#0c2a52'], speed: 1.12, mass: .95, power: 1.05, jump: 1, maxHp: 96 },
-    sensei: { name: 'BIG JOE', title: 'Iron-Chinned Slugger', mark: 'BJ', color: '#f5b942', skin: 'deep', hair: 0, buildX: 1.10, buildY: .99, trunks: ['#c8962e', '#ffe08a', '#6b4c10'], speed: .84, mass: 1.25, power: 1.16, jump: 1, maxHp: 115 },
-    kage:   { name: 'KID DYNAMO', title: 'Flashy Speedster', mark: 'KD', color: '#c084fc', skin: 'brown', hair: 2, buildX: .88, buildY: 1.06, trunks: ['#6d33b8', '#c9a2ff', '#32125c'], speed: 1.25, mass: .78, power: .9, jump: 1, maxHp: 85 },
-    duke:   { name: 'DUKE ELLIS', title: 'Slick Southpaw', mark: 'DE', color: '#f97316', skin: 'deep', hair: 1, buildX: 1.02, buildY: 1.02, trunks: ['#c2560f', '#ffa35c', '#5e2804'], speed: 1.08, mass: .98, power: 1.02, jump: 1, maxHp: 98 },
-    toro:   { name: 'EL TORO', title: 'Body Puncher', mark: 'ET', color: '#84cc16', skin: 'tan', hair: 0, buildX: 1.08, buildY: .99, trunks: ['#4d7c0f', '#b6f25a', '#22380a'], speed: .95, mass: 1.15, power: 1.12, jump: 1, maxHp: 108 },
-    finn:   { name: 'FINN DOYLE', title: 'Relentless Swarmer', mark: 'FD', color: '#e879f9', skin: 'light', hair: 1, buildX: .90, buildY: 1.04, trunks: ['#9d2fb0', '#f0a6fb', '#48115a'], speed: 1.16, mass: .9, power: .96, jump: 1, maxHp: 94 },
-    baba:   { name: 'BABA OKAFOR', title: 'Heavy-Handed Giant', mark: 'BO', color: '#14b8a6', skin: 'deep', hair: 2, buildX: 1.15, buildY: 1.00, trunks: ['#0f766e', '#5eead4', '#053b37'], speed: .8, mass: 1.42, power: 1.24, jump: 1, maxHp: 125 },
-    kuro:   { name: 'THE HAMMER', title: 'Undisputed Champion', mark: 'TH', color: '#ef4444', skin: 'deep', hair: 0, buildX: 1.10, buildY: .99, trunks: ['#1b1b1f', '#55555e', '#000000'], speed: .9, mass: 1.38, power: 1.2, jump: 1, maxHp: 120 }
+    // Each contender has a distinct silhouette, haircut, beard and corner colours.
+    shadow: { name: 'MANQ', title: 'South African Contender', mark: 'MQ', color: '#f1ede4', skin: 'brown', hair: 3, beard: 1, signature: 'SA flag trim', buildX: 1.00, buildY: 1.00, trunks: ['#dedad2', '#ffffff', '#8f8b84'], speed: 1, mass: 1, power: 1, jump: 1, maxHp: 100 },
+    akane:  { name: 'RICO VEGA', title: 'Counter-Puncher', mark: 'RV', color: '#34d399', skin: 'tan', hair: 4, beard: 0, signature: 'Emerald flash', buildX: .91, buildY: 1.03, trunks: ['#157a55', '#4fe0a6', '#083a28'], speed: 1.2, mass: .82, power: .92, jump: 1, maxHp: 88 },
+    raiden: { name: 'VOLKOV', title: 'Technical Out-Boxer', mark: 'VK', color: '#38bdf8', skin: 'light', hair: 5, beard: 2, signature: 'Blue corner', buildX: .90, buildY: 1.04, trunks: ['#1f5fae', '#79b8ff', '#0c2a52'], speed: 1.12, mass: .95, power: 1.05, jump: 1, maxHp: 96 },
+    sensei: { name: 'BIG JOE', title: 'Iron-Chinned Slugger', mark: 'BJ', color: '#f5b942', skin: 'deep', hair: 0, beard: 3, signature: 'Gold waistband', buildX: 1.10, buildY: .99, trunks: ['#c8962e', '#ffe08a', '#6b4c10'], speed: .84, mass: 1.25, power: 1.16, jump: 1, maxHp: 115 },
+    kage:   { name: 'KID DYNAMO', title: 'Flashy Speedster', mark: 'KD', color: '#c084fc', skin: 'brown', hair: 2, beard: 0, signature: 'Violet lightning', buildX: .88, buildY: 1.06, trunks: ['#6d33b8', '#c9a2ff', '#32125c'], speed: 1.25, mass: .78, power: .9, jump: 1, maxHp: 85 },
+    duke:   { name: 'DUKE ELLIS', title: 'Slick Southpaw', mark: 'DE', color: '#f97316', skin: 'deep', hair: 7, beard: 1, signature: 'Orange southpaw', buildX: 1.02, buildY: 1.02, trunks: ['#c2560f', '#ffa35c', '#5e2804'], speed: 1.08, mass: .98, power: 1.02, jump: 1, maxHp: 98 },
+    toro:   { name: 'EL TORO', title: 'Body Puncher', mark: 'ET', color: '#84cc16', skin: 'tan', hair: 0, beard: 4, signature: 'Olive trunks', buildX: 1.08, buildY: .99, trunks: ['#4d7c0f', '#b6f25a', '#22380a'], speed: .95, mass: 1.15, power: 1.12, jump: 1, maxHp: 108 },
+    finn:   { name: 'FINN DOYLE', title: 'Relentless Swarmer', mark: 'FD', color: '#e879f9', skin: 'light', hair: 1, beard: 0, signature: 'Magenta waistband', buildX: .90, buildY: 1.04, trunks: ['#9d2fb0', '#f0a6fb', '#48115a'], speed: 1.16, mass: .9, power: .96, jump: 1, maxHp: 94 },
+    baba:   { name: 'BABA OKAFOR', title: 'Heavy-Handed Giant', mark: 'BO', color: '#14b8a6', skin: 'deep', hair: 9, beard: 3, signature: 'Teal giant', buildX: 1.15, buildY: 1.00, trunks: ['#0f766e', '#5eead4', '#053b37'], speed: .8, mass: 1.42, power: 1.24, jump: 1, maxHp: 125 },
+    kuro:   { name: 'THE HAMMER', title: 'Undisputed Champion', mark: 'TH', color: '#ef4444', skin: 'deep', hair: 0, beard: 4, signature: 'Black-and-red champion', buildX: 1.10, buildY: .99, trunks: ['#1b1b1f', '#55555e', '#000000'], speed: .9, mass: 1.38, power: 1.2, jump: 1, maxHp: 120 }
   };
   const CHAR_IDS = Object.keys(CHARACTERS);
 
@@ -1795,9 +1795,9 @@
 
   // Weight divisions. Each has its own belt; lighter men are quicker, heavier men hit harder.
   const DIVISIONS = [
-    { name: 'Lightweight',  belt: 'Last Round World Lightweight Championship',  limit: '135 lb',  color: '#c9c9c9', speed: 1.12, power: .9,   ladder: LIGHTWEIGHT_LADDER },
-    { name: 'Middleweight', belt: 'Last Round World Middleweight Championship', limit: '160 lb',  color: '#d4af37', speed: 1,    power: 1,    ladder: MIDDLEWEIGHT_LADDER },
-    { name: 'Heavyweight',  belt: 'Last Round World Heavyweight Championship',  limit: '200+ lb', color: '#e10613', speed: .92,  power: 1.18, ladder: HEAVYWEIGHT_LADDER }
+    { name: 'Lightweight',  belt: 'WBC · WBA · IBF · WBO Lightweight titles',  limit: '135 lb',  color: '#c9c9c9', speed: 1.12, power: .9,   ladder: LIGHTWEIGHT_LADDER },
+    { name: 'Middleweight', belt: 'WBC · WBA · IBF · WBO Middleweight titles', limit: '160 lb',  color: '#d4af37', speed: 1,    power: 1,    ladder: MIDDLEWEIGHT_LADDER },
+    { name: 'Heavyweight',  belt: 'WBC · WBA · IBF · WBO Heavyweight titles',  limit: '200+ lb', color: '#e10613', speed: .92,  power: 1.18, ladder: HEAVYWEIGHT_LADDER }
   ];
 
   // Attack frame data (at speed = 1.0, scaled by weapon speed)
@@ -3893,9 +3893,28 @@
     c.fillStyle = skin[2];
     c.beginPath(); c.ellipse(headX - dir * 3.5, headY + 1, 2.2, 3.2, 0, 0, Math.PI * 2); c.fill();     // ear
     if (ch.hair) {
-      const tall = ch.hair > 1 ? 3 : 0;
-      c.fillStyle = '#120c0a';
-      c.beginPath(); c.ellipse(headX - dir * 1.5, headY - 5 - tall, 10.9, 8 + tall, 0, Math.PI, Math.PI * 2); c.fill();
+      c.fillStyle = ch.hair === 5 ? '#c9c3b8' : (ch.hair === 8 ? '#8b6b4c' : '#120c0a');
+      c.beginPath();
+      if (ch.hair === 4 || ch.hair === 6 || ch.hair === 9) {
+        c.ellipse(headX - dir * 1.5, headY - 8, 11.2, 7.2, 0, Math.PI, Math.PI * 2);
+        c.fill();
+        if (ch.hair === 4 || ch.hair === 9) { c.fillRect(headX - 10, headY - 8, 4, 5); c.fillRect(headX + 6, headY - 8, 4, 5); }
+      } else if (ch.hair === 3 || ch.hair === 7) {
+        c.ellipse(headX - dir * 1.5, headY - 8, 11, 6.5, 0, Math.PI, Math.PI * 2); c.fill();
+        c.fillRect(headX - 10, headY - 7, 20, 3);
+      } else {
+        const tall = ch.hair === 2 ? 7 : (ch.hair === 5 ? 2 : ch.hair === 8 ? 4 : 0);
+        c.ellipse(headX - dir * 1.5, headY - 5 - tall, 10.9, 8 + tall, 0, Math.PI, Math.PI * 2); c.fill();
+      }
+    }
+    if (ch.beard) {
+      c.fillStyle = skin[2];
+      c.beginPath();
+      if (ch.beard === 1) c.ellipse(headX + dir * 2, headY + 8, 6.2, 3.2, 0, 0, Math.PI);
+      else if (ch.beard === 2) c.ellipse(headX + dir * 2, headY + 9, 7.1, 4.2, 0, 0, Math.PI);
+      else if (ch.beard === 3) c.ellipse(headX + dir * 2, headY + 8, 7.6, 5.1, 0, 0, Math.PI);
+      else c.ellipse(headX + dir * 2, headY + 9, 5.6, 3.2, 0, 0, Math.PI);
+      c.fill();
     }
     drawFace(c, f, headX, headY, dir, skin);
     c.lineWidth = .8;
@@ -4842,9 +4861,14 @@
     c.fillStyle = skin[0];
     c.beginPath(); c.ellipse(60, 52, 22, 27, 0, 0, Math.PI * 2); c.fill();       // head
     if (ch.hair) {
-      const tall = ch.hair > 1 ? 6 : 0;
-      c.fillStyle = '#120c0a';
-      c.beginPath(); c.ellipse(60, 40 - tall, 23, 16 + tall, 0, Math.PI, Math.PI * 2); c.fill();
+      c.fillStyle = ch.hair === 5 ? '#c9c3b8' : (ch.hair === 8 ? '#8b6b4c' : '#120c0a');
+      c.beginPath();
+      const tall = ch.hair === 2 ? 8 : (ch.hair === 6 ? 4 : 0);
+      c.ellipse(60, 40 - tall, 23, 16 + tall, 0, Math.PI, Math.PI * 2); c.fill();
+      if ([4,7,9].includes(ch.hair)) { c.fillRect(38, 39, 5, 9); c.fillRect(77, 39, 5, 9); }
+    }
+    if (ch.beard) {
+      c.fillStyle = skin[2]; c.beginPath(); c.ellipse(60, 69, ch.beard >= 3 ? 13 : 10, ch.beard >= 3 ? 6 : 4, 0, 0, Math.PI); c.fill();
     }
     c.strokeStyle = '#0c0706'; c.lineWidth = 2.4; c.lineCap = 'round';
     c.beginPath(); c.moveTo(46, 49); c.lineTo(56, 52); c.moveTo(74, 49); c.lineTo(64, 52);   // brows
@@ -5037,9 +5061,18 @@
     wrap.innerHTML = `
       <div class="fc-divs">${tabs}</div>
       <div class="fc-head"><span>${dv.name} Division · ${dv.belt}</span><b>${status}</b></div>
-      <div class="fc-meta" style="margin:8px 0;padding:10px 12px;border:1px solid rgba(245,185,66,.35);background:rgba(245,185,66,.08);border-radius:8px;line-height:1.45;color:#f4e7c2">MANQ’S ROAD TO THE BELT — Earn a ranking, defeat the mandatory challenger, then win the division title. Champions must defend their belt to build a legacy.</div>
+      <div class="fc-meta" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+        ${['WBC','WBA','IBF','WBO'].map((org,n)=>`<span style="padding:5px 9px;border:1px solid rgba(245,185,66,.45);border-radius:5px;background:rgba(245,185,66,.08);font-weight:900;letter-spacing:1px;color:#f3d58b">${org} ${champ ? 'CHAMPION' : 'TITLE ROUTE'}</span>`).join('')}
+      </div>
+      <div class="fc-meta" style="margin:8px 0;padding:12px;border:1px solid rgba(245,185,66,.4);background:linear-gradient(120deg,rgba(245,185,66,.12),rgba(10,10,10,.65));border-radius:9px;line-height:1.5;color:#f4e7c2">
+        <strong style="display:block;letter-spacing:1.2px;color:#f5c45c;margin-bottom:4px">MANQ’S ROAD TO THE BELT · CAREER STORY</strong>
+        ${champ ? `THE CHAMPION’S TEST — MANQ has the ${dv.name} belt. Every defence adds to the legacy; the next challenger wants to end the reign.` :
+          cr.lostTo[dNow] != null ? `THE COMEBACK — The setback is part of the story. MANQ gets another shot, but the division has not forgotten the last result.` :
+          `THE CONTENDER’S CLIMB — Fight ${idx + 1} of ${total}. ${idx === 0 ? 'A first win puts MANQ on the rankings board.' : `The pressure rises as MANQ closes in on the title shot.`} ${st.name} is known as the ${st.title.toLowerCase()}.` }
+        <span style="display:block;margin-top:5px;color:#d6c9a5">Build a record, climb the rankings, win the division title and defend it to become a recognised champion.</span>
+      </div>
       <div class="fc-tape">
-        <div class="fc-side"><canvas class="fc-face" width="240" height="240" data-char="${heroId}"></canvas><strong>${me.name}</strong><small>${me.title}</small></div>
+        <div class="fc-side"><canvas class="fc-face" width="240" height="240" data-char="${heroId}"></canvas><strong>${me.name}</strong><small>${me.title}</small><small style="color:#e8c36b">${me.signature || "Fight-night kit"}</small></div>
         <div class="fc-mid">
           <em>VS</em>
           ${row('Speed', Math.round(me.speed * 100), Math.round(opp.speed * 100))}
@@ -5048,7 +5081,7 @@
           ${row('Weight', Math.round(me.mass * 100), Math.round(opp.mass * 100))}
           <div class="fc-meta">${ARENA_NAMES[st.arena]} &middot; ${st.diff.toUpperCase()} &middot; Purse ${st.reward}c</div>
         </div>
-        <div class="fc-side"><canvas class="fc-face" width="240" height="240" data-char="${st.character}"></canvas><strong>${st.name}</strong><small>${st.title}</small></div>
+        <div class="fc-side"><canvas class="fc-face" width="240" height="240" data-char="${st.character}"></canvas><strong>${st.name}</strong><small>${st.title}</small><small style="color:#e8c36b">${opp.signature || "Fight-night kit"}</small></div>
       </div>
       <ol class="fc-ladder">${ladder.map((s, i) => `
         <li class="${i < idx ? 'done' : i === idx ? 'next' : 'locked'}">
