@@ -1877,7 +1877,10 @@
     let master = null;
     let musicTimer = null;
     let musicStep = 0;
-    const SCALE = [220, 261.63, 293.66, 329.63, 392.0, 440, 523.25, 587.33];
+    const bgTrack = new Audio('./fen-test.m4a');
+    bgTrack.loop = true;
+    bgTrack.preload = 'auto';
+    bgTrack.volume = 0.45;
 
     function unlock() {
       if (!ctx) {
@@ -1889,12 +1892,23 @@
         master.connect(ctx.destination);
       }
       if (ctx.state === 'suspended') ctx.resume();
+      if (save.settings.audio) {
+        const playAttempt = bgTrack.play();
+        if (playAttempt && typeof playAttempt.catch === 'function') playAttempt.catch(() => {});
+      }
       startMusic();
     }
 
     function setEnabled(on) {
       save.settings.audio = on;
       if (master && ctx) master.gain.setTargetAtTime(on ? 0.45 : 0, ctx.currentTime, 0.03);
+      bgTrack.volume = on ? 0.45 : 0;
+      if (on) {
+        const playAttempt = bgTrack.play();
+        if (playAttempt && typeof playAttempt.catch === 'function') playAttempt.catch(() => {});
+      } else {
+        bgTrack.pause();
+      }
       persistSave();
     }
 
@@ -1973,20 +1987,7 @@
       tone(660, 880, 0.055, 'square', 0.06);
     }
 
-    function startMusic() {
-      if (musicTimer) return;
-      musicTimer = setInterval(() => {
-        if (!ctx || !save.settings.audio || ctx.state !== 'running') return;
-        const step = musicStep++;
-        // Soft taiko pulse every 4 steps
-        if (step % 4 === 0) tone(92, 46, 0.22, 'sine', 0.12);
-        // Pentatonic plucked koto melody
-        if (step % 2 === 0 || Math.random() < 0.35) {
-          const note = SCALE[(step * 3 + (step % 5)) % SCALE.length];
-          tone(note, note * 0.995, 0.22, 'square', 0.028);   // chiptune lead
-        }
-      }, 280);
-    }
+    function startMusic() { /* Continuous background track is handled by bgTrack. */ }
 
     return { unlock, setEnabled, playWhoosh, playHit, playBlock, playGong, playKO, playUI };
   })();
