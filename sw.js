@@ -1,9 +1,9 @@
 /* Last Round — offline app cache. Bump CACHE when publishing an update. */
-const CACHE = 'last-round-v5';
+const CACHE = 'last-round-v4';
 const CORE = [
   './', './index.html', './manifest.webmanifest',
   './icon.svg', './icon-192.png', './icon-512.png',
-  './icon-maskable.png', './fen-test.m4a'
+  './icon-maskable.png'
 ];
 const OPTIONAL = ['./home-bg.jpg', './home-bg.jpeg', './home-bg.png', './home-bg.webp'];
 

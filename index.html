@@ -1877,10 +1877,7 @@
     let master = null;
     let musicTimer = null;
     let musicStep = 0;
-    const bgTrack = new Audio('./fen-test.m4a');
-    bgTrack.loop = true;
-    bgTrack.preload = 'auto';
-    bgTrack.volume = 0.45;
+    const SCALE = [220, 261.63, 293.66, 329.63, 392.0, 440, 523.25, 587.33];
 
     function unlock() {
       if (!ctx) {
@@ -1892,23 +1889,12 @@
         master.connect(ctx.destination);
       }
       if (ctx.state === 'suspended') ctx.resume();
-      if (save.settings.audio) {
-        const playAttempt = bgTrack.play();
-        if (playAttempt && typeof playAttempt.catch === 'function') playAttempt.catch(() => {});
-      }
       startMusic();
     }
 
     function setEnabled(on) {
       save.settings.audio = on;
       if (master && ctx) master.gain.setTargetAtTime(on ? 0.45 : 0, ctx.currentTime, 0.03);
-      bgTrack.volume = on ? 0.45 : 0;
-      if (on) {
-        const playAttempt = bgTrack.play();
-        if (playAttempt && typeof playAttempt.catch === 'function') playAttempt.catch(() => {});
-      } else {
-        bgTrack.pause();
-      }
       persistSave();
     }
 
@@ -1987,7 +1973,20 @@
       tone(660, 880, 0.055, 'square', 0.06);
     }
 
-    function startMusic() { /* Continuous background track is handled by bgTrack. */ }
+    function startMusic() {
+      if (musicTimer) return;
+      musicTimer = setInterval(() => {
+        if (!ctx || !save.settings.audio || ctx.state !== 'running') return;
+        const step = musicStep++;
+        // Soft taiko pulse every 4 steps
+        if (step % 4 === 0) tone(92, 46, 0.22, 'sine', 0.12);
+        // Pentatonic plucked koto melody
+        if (step % 2 === 0 || Math.random() < 0.35) {
+          const note = SCALE[(step * 3 + (step % 5)) % SCALE.length];
+          tone(note, note * 0.995, 0.22, 'square', 0.028);   // chiptune lead
+        }
+      }, 280);
+    }
 
     return { unlock, setEnabled, playWhoosh, playHit, playBlock, playGong, playKO, playUI };
   })();
@@ -2429,7 +2428,7 @@
         weaponTip: { x: x, y: CFG.GROUND_Y - 80 }
       },
       // AI runtime
-      ai: { action: 'approach', timer: 0, reactDelay: 0, pendingHit: false }
+      ai: { action: 'approach', timer: 0, reactDelay: 0, pendingHit: false, circleDir: 1 }
     };
   }
 
@@ -2979,125 +2978,177 @@
      8. AI OPPONENT STATE MACHINE
      ========================================================================== */
   const AI_PRESETS = {
-    easy:   { reactFrames: 18, blockProb: 0.25, comboProb: 0.35, aggro: 0.45 },
-    normal: { reactFrames: 10, blockProb: 0.52, comboProb: 0.65, aggro: 0.68 },
-    hard:   { reactFrames: 5,  blockProb: 0.78, comboProb: 0.88, aggro: 0.88 }
+    easy:   { reactFrames: 20, blockProb: 0.30, comboProb: 0.38, aggro: 0.46, readProb: 0.12 },
+    normal: { reactFrames: 12, blockProb: 0.52, comboProb: 0.62, aggro: 0.64, readProb: 0.30 },
+    hard:   { reactFrames: 7,  blockProb: 0.72, comboProb: 0.82, aggro: 0.78, readProb: 0.48 }
   };
+
+  // Each opponent has a recognisable boxing identity. These profiles change
+  // preferred range, footwork, defence, punch selection and combination rhythm.
+  const BOXING_STYLES = {
+    shadow: { id:'balanced',  label:'BOXER-PUNCHER', range:150, pressure:.55, circle:.22, guard:.52, body:.18, heavy:.20, combo:.55, patience:.48 },
+    akane:  { id:'counter',   label:'COUNTER-PUNCHER',range:185, pressure:.28, circle:.58, guard:.82, body:.12, heavy:.24, combo:.38, patience:.82 },
+    raiden: { id:'outboxer',  label:'TECHNICAL OUT-BOXER',range:205, pressure:.25, circle:.72, guard:.62, body:.08, heavy:.12, combo:.42, patience:.88 },
+    sensei: { id:'slugger',   label:'POWER SLUGGER',range:132, pressure:.68, circle:.12, guard:.42, body:.25, heavy:.62, combo:.30, patience:.28 },
+    kage:   { id:'speedster', label:'SPEEDSTER',range:142, pressure:.72, circle:.35, guard:.36, body:.10, heavy:.12, combo:.88, patience:.20 },
+    duke:   { id:'southpaw',  label:'SOUTHPAW TECHNICIAN',range:170, pressure:.42, circle:.64, guard:.68, body:.22, heavy:.25, combo:.62, patience:.66 },
+    toro:   { id:'bodywork',  label:'BODY PUNCHER',range:118, pressure:.78, circle:.16, guard:.48, body:.82, heavy:.36, combo:.58, patience:.30 },
+    finn:   { id:'swarmer',   label:'RELENTLESS SWARMER',range:112, pressure:.92, circle:.12, guard:.28, body:.35, heavy:.18, combo:.92, patience:.12 },
+    baba:   { id:'giant',     label:'HEAVY-HANDED GIANT',range:138, pressure:.54, circle:.08, guard:.58, body:.32, heavy:.78, combo:.24, patience:.44 },
+    kuro:   { id:'champion',  label:'CHAMPION',range:158, pressure:.62, circle:.38, guard:.72, body:.30, heavy:.48, combo:.72, patience:.52 }
+  };
+
+  function getBoxingStyle(f) {
+    return BOXING_STYLES[f.characterId] || BOXING_STYLES.shadow;
+  }
 
   function updateAI(ai, player) {
     if (!ai.isAI || Game.roundPhase !== 'fight') return;
     const inp = Input.players[ai.idx];
     inp.left = inp.right = inp.up = inp.down = inp.block = false;
 
-    const preset = AI_PRESETS[Game.difficulty || 'normal'];
-    const dist = Math.abs(player.x - ai.x);
-    const dirToP = player.x >= ai.x ? 1 : -1;
-    const wRange = 64 * WEAPONS[ai.weaponId].range * CFG.FIGHTER_SCALE;
+    const difficulty = AI_PRESETS[Game.difficulty || 'normal'];
+    const style = getBoxingStyle(ai);
+    const brain = ai.ai;
+    const dx = player.x - ai.x;
+    const dist = Math.abs(dx);
+    const dirToP = dx >= 0 ? 1 : -1;
+    const preferred = style.range * CFG.FIGHTER_SCALE * .72;
+    const tooClose = dist < preferred * .62;
+    const tooFar = dist > preferred * 1.28;
+    const tired = ai.stamina < 24;
+    const hurt = ai.hp < ai.character.maxHp * .32;
+    const opponentAttacking = player.state === 'attack';
+    const playerRecovering = ['attack','hit','guardBreak','knockdown'].includes(player.state);
+    const playerMove = player.moveName && MOVES[player.moveName];
 
-    // During a count the standing boxer backs off toward a neutral corner.
+    // During a knockdown count, give the boxer space and reset ring position.
     if (player.state === 'knockdown' || player.state === 'getup') {
-      if (dist < 300) { if (dirToP > 0) inp.left = true; else inp.right = true; }
+      if (dist < 330) { if (dirToP > 0) inp.left = true; else inp.right = true; }
+      brain.action = 'reset';
       return;
     }
 
-    // Observe a new strike, then react only after the difficulty's real delay.
-    if (player.state === 'attack' && dist < wRange + 46) {
-      if (!ai.ai.pendingHit) {
-        ai.ai.pendingHit = true;
-        ai.ai.reactDelay = preset.reactFrames;
+    // Defence is based on readable telegraphs, not instant reactions. Hard AI
+    // reads more often, while every style still has a different defensive habit.
+    if (opponentAttacking && dist < preferred * 1.65) {
+      if (!brain.pendingHit) {
+        brain.pendingHit = true;
+        brain.reactDelay = difficulty.reactFrames + Math.floor(Math.random() * 5);
       }
-      if (ai.ai.reactDelay > 0) ai.ai.reactDelay--;
-      else if (ai.ai.reactDelay === 0) {
-        ai.ai.reactDelay = -1;
-        if (Math.random() < preset.blockProb && ai.stamina > 25) {
-          // Sometimes ducks a head shot instead of covering up.
-          const pm = player.moveName && MOVES[player.moveName];
-          ai.ai.action = pm && pm.high && Math.random() < .35 ? 'duck' : 'block';
-          ai.ai.timer = 12;
-        } else if (Math.random() < .25) {
-          ai.ai.action = 'retreat';
-          ai.ai.timer = 12;
+      if (brain.reactDelay > 0) brain.reactDelay--;
+      else if (brain.reactDelay === 0) {
+        brain.reactDelay = -1;
+        const canDefend = ai.stamina > 12;
+        if (canDefend && Math.random() < difficulty.blockProb * style.guard) {
+          brain.action = playerMove && playerMove.high && Math.random() < .30 ? 'duck' : 'block';
+          brain.timer = 7 + Math.floor(Math.random() * 8);
+        } else if (style.id === 'counter' && Math.random() < .58) {
+          brain.action = 'counter'; brain.timer = 8;
+        } else if (Math.random() < .28) {
+          brain.action = 'retreat'; brain.timer = 8;
         }
       }
     } else {
-      ai.ai.pendingHit = false;
+      brain.pendingHit = false;
+      if (brain.reactDelay < 0) brain.reactDelay = 0;
     }
 
-    // Combo follow-up when hitting player
-    if (ai.state === 'attack' && ai.moveHitDone && Math.random() < preset.comboProb) {
+    // A counter-puncher waits for the player's recovery; a swarmer keeps
+    // combinations flowing; power styles save energy for clear openings.
+    if (ai.state === 'attack' && ai.moveHitDone && Math.random() < difficulty.comboProb * style.combo) {
       const m = MOVES[ai.moveName];
       if (m && m.chainTo === 'punch2') bufferAction(ai.idx, 'punch');
-      if (m && m.chainTo === 'heavyFinisher') bufferAction(ai.idx, 'heavy');
+      else if (m && m.chainTo === 'heavyFinisher' && !tired) bufferAction(ai.idx, 'heavy');
     }
 
-    // Champion-only pressure: closes distance fast when the challenger hangs back
-    if (ai.isBoss && ai.ai.timer <= 0 && canAct(ai) && dist > 230 && Math.random() < (ai.ragePhase ? 0.055 : 0.025)) {
-      // Champion's signature: an explosive step-in to cut off the ring, then a power shot.
+    if (brain.timer > 0) brain.timer--;
+    else if (canAct(ai)) {
+      const roll = Math.random();
+      if (brain.action === 'counter' && playerRecovering) {
+        brain.action = 'attack'; brain.timer = 4;
+      } else if (style.id === 'counter' || style.id === 'outboxer') {
+        if (tooClose) { brain.action = 'retreat'; brain.timer = 9 + Math.floor(Math.random()*8); }
+        else if (tooFar) { brain.action = 'approach'; brain.timer = 10 + Math.floor(Math.random()*10); }
+        else if (playerRecovering && roll < difficulty.readProb + .25) { brain.action = 'attack'; brain.timer = 5; }
+        else if (roll < style.patience) { brain.action = 'circle'; brain.timer = 12 + Math.floor(Math.random()*12); }
+        else { brain.action = 'bait'; brain.timer = 9; }
+      } else if (style.id === 'swarmer' || style.id === 'speedster') {
+        brain.action = tooFar ? 'approach' : (tooClose && roll < .18 ? 'circle' : 'attack');
+        brain.timer = 7 + Math.floor(Math.random()*8);
+      } else if (style.id === 'slugger' || style.id === 'giant') {
+        brain.action = tooFar ? 'approach' : (tired ? 'guard' : (roll < .72 ? 'attack' : 'bait'));
+        brain.timer = 12 + Math.floor(Math.random()*12);
+      } else if (style.id === 'bodywork') {
+        brain.action = tooFar ? 'approach' : (tooClose ? 'circle' : 'attack');
+        brain.timer = 8 + Math.floor(Math.random()*9);
+      } else {
+        brain.action = tooFar ? 'approach' : (tooClose && roll < .25 ? 'retreat' : (roll < style.pressure ? 'attack' : 'circle'));
+        brain.timer = 9 + Math.floor(Math.random()*10);
+      }
+    }
+
+    // Execute footwork. Circling alternates direction to avoid robotic straight
+    // lines and keeps the opponent near the centre of the ring.
+    const circleDir = brain.circleDir || (brain.circleDir = Math.random() < .5 ? -1 : 1);
+    if (brain.action === 'approach') {
+      if (dirToP > 0) inp.right = true; else inp.left = true;
+      if (dist > preferred * 1.8 && ai.stamina > 45 && Math.random() < .018) bufferAction(ai.idx, 'dash');
+    } else if (brain.action === 'retreat') {
+      if (dirToP > 0) inp.left = true; else inp.right = true;
+    } else if (brain.action === 'circle') {
+      if (Math.random() < .025) brain.circleDir = -circleDir;
+      if (circleDir > 0) inp.left = true; else inp.right = true;
+      if (tooFar && dirToP > 0) inp.right = true;
+      else if (tooFar) inp.left = true;
+    } else if (brain.action === 'duck') {
+      inp.down = true;
+    } else if (brain.action === 'block' || brain.action === 'guard') {
+      inp.block = true;
+    } else if (brain.action === 'bait') {
+      if (brain.timer % 10 < 4) { if (dirToP > 0) inp.left = true; else inp.right = true; }
+      if (style.id === 'counter' && playerRecovering && canAct(ai)) brain.action = 'attack';
+    } else if ((brain.action === 'attack' || brain.action === 'counter') && canAct(ai)) {
+      if (tired && Math.random() < .55) {
+        inp.block = true;
+        brain.action = 'guard'; brain.timer = 10;
+      } else {
+        const r = Math.random();
+        if (ai.energy >= CFG.MAX_ENERGY && !hurt && r < .12) {
+          bufferAction(ai.idx, 'special');
+        } else if (style.id === 'bodywork' && r < style.body) {
+          bufferAction(ai.idx, 'sweep');
+        } else if ((style.id === 'slugger' || style.id === 'giant') && r < style.heavy && !tired) {
+          if (r < .22) { inp.up = true; bufferAction(ai.idx, 'heavy'); } else bufferAction(ai.idx, 'heavy');
+        } else if (style.id === 'outboxer' || style.id === 'counter') {
+          if (r < .62) bufferAction(ai.idx, 'punch');
+          else if (r < .86) bufferAction(ai.idx, 'kick');
+          else { if (dirToP > 0) inp.right = true; else inp.left = true; bufferAction(ai.idx, 'punch'); }
+        } else if (style.id === 'speedster' || style.id === 'swarmer') {
+          if (r < .58) bufferAction(ai.idx, 'punch');
+          else if (r < .82) bufferAction(ai.idx, 'kick');
+          else { if (dirToP > 0) inp.right = true; else inp.left = true; bufferAction(ai.idx, 'punch'); }
+        } else if (style.id === 'bodywork') {
+          if (r < .55) bufferAction(ai.idx, 'sweep');
+          else if (r < .82) bufferAction(ai.idx, 'punch');
+          else { inp.up = true; bufferAction(ai.idx, 'heavy'); }
+        } else {
+          if (r < .42) bufferAction(ai.idx, 'punch');
+          else if (r < .68) bufferAction(ai.idx, 'kick');
+          else if (r < .88 && !tired) bufferAction(ai.idx, 'heavy');
+          else { if (dirToP > 0) inp.right = true; else inp.left = true; bufferAction(ai.idx, 'punch'); }
+        }
+        brain.action = style.id === 'swarmer' ? 'approach' : 'circle';
+        brain.timer = style.id === 'swarmer' ? 5 : 10 + Math.floor(Math.random() * 8);
+      }
+    }
+
+    // Bosses retain their signature pressure, but only when the player gives
+    // them room and the boss has enough stamina to make the burst believable.
+    if (ai.isBoss && brain.timer <= 1 && canAct(ai) && dist > preferred * 1.8 && ai.stamina > 35 && Math.random() < (ai.ragePhase ? .045 : .018)) {
       if (dirToP > 0) inp.right = true; else inp.left = true;
       bufferAction(ai.idx, 'dash');
-      ai.ai.action = 'attack';
-      ai.ai.timer = 16;
-      return;
-    }
-
-    if (ai.ai.timer > 0) {
-      ai.ai.timer--;
-    } else {
-      // Pick next tactical decision
-      const r = Math.random();
-      if (dist > wRange + 70) {
-        ai.ai.action = r < 0.14 ? 'bait' : 'approach';
-        ai.ai.timer = 18 + Math.floor(Math.random() * 18);
-      } else if (dist > wRange - 12) {
-        if (r < preset.aggro) {
-          ai.ai.action = 'attack';
-          ai.ai.timer = 14;
-        } else if (r < preset.aggro + 0.2) {
-          ai.ai.action = 'bait';
-          ai.ai.timer = 14;
-        } else {
-          ai.ai.action = 'retreat';
-          ai.ai.timer = 12;
-        }
-      } else {
-        ai.ai.action = r < 0.72 ? 'attack' : 'retreat';
-        ai.ai.timer = 14;
-      }
-    }
-
-    // Execute current AI state
-    if (ai.ai.action === 'approach') {
-      if (dirToP > 0) inp.right = true; else inp.left = true;
-      if (dist > 260 && Math.random() < 0.02) bufferAction(ai.idx, 'dash');
-    } else if (ai.ai.action === 'retreat') {
-      if (dirToP > 0) inp.left = true; else inp.right = true;
-    } else if (ai.ai.action === 'duck') {
-      inp.down = true;
-    } else if (ai.ai.action === 'block') {
-      inp.block = true;
-    } else if (ai.ai.action === 'bait') {
-      if (ai.ai.timer % 12 < 6) { if (dirToP > 0) inp.left = true; else inp.right = true; }
-    } else if (ai.ai.action === 'attack' && canAct(ai)) {
-      if (ai.energy >= CFG.MAX_ENERGY && Math.random() < 0.65) {
-        bufferAction(ai.idx, 'special');
-      } else {
-        const roll = Math.random();
-        if (ai.isBoss && ai.ragePhase && roll < 0.28) {
-          startAttack(ai, 'bossShock');
-        } else if (roll < 0.36) {
-          bufferAction(ai.idx, 'punch');
-        } else if (roll < 0.64) {
-          if (Math.random() < 0.25) inp.down = true;
-          bufferAction(ai.idx, 'kick');
-        } else if (roll < 0.88) {
-          bufferAction(ai.idx, 'heavy');
-        } else {
-          if (dirToP > 0) inp.right = true; else inp.left = true;
-          bufferAction(ai.idx, 'punch');
-        }
-      }
-      ai.ai.action = 'approach';
-      ai.ai.timer = 12 + Math.floor(Math.random() * 14);
+      brain.action = 'attack'; brain.timer = 12;
     }
   }
 
