@@ -1465,7 +1465,7 @@
   </div>
 
   <div id="homeDuelCaption" aria-hidden="true">
-    <span id="homeHeroName">KING COLE</span><em>BY</em><span>KNOCKOUT</span>
+    <span id="homeHeroName">MANQ</span><em>BY</em><span>KNOCKOUT</span>
   </div>
 
   <!-- SETUP / TOURNAMENT / QUICK FIGHT MODAL -->
@@ -1669,16 +1669,16 @@
   // Each character changes movement, resilience, impact and silhouette, not just its name.
   const CHARACTERS = {
     // skin: palette key, hair: 0 shaved / 1 short crop / 2 high-top, trunks: [base, highlight, shadow]
-    shadow: { name: 'KING COLE', title: 'Complete Boxer', mark: 'KC', color: '#f1ede4', skin: 'brown', hair: 1, trunks: ['#dedad2', '#ffffff', '#8f8b84'], speed: 1, mass: 1, power: 1, jump: 1, maxHp: 100 },
-    akane:  { name: 'RICO VEGA', title: 'Counter-Puncher', mark: 'RV', color: '#34d399', skin: 'tan', hair: 2, trunks: ['#157a55', '#4fe0a6', '#083a28'], speed: 1.2, mass: .82, power: .92, jump: 1, maxHp: 88 },
-    raiden: { name: 'VOLKOV', title: 'Technical Out-Boxer', mark: 'VK', color: '#38bdf8', skin: 'light', hair: 1, trunks: ['#1f5fae', '#79b8ff', '#0c2a52'], speed: 1.12, mass: .95, power: 1.05, jump: 1, maxHp: 96 },
-    sensei: { name: 'BIG JOE', title: 'Iron-Chinned Slugger', mark: 'BJ', color: '#f5b942', skin: 'deep', hair: 0, trunks: ['#c8962e', '#ffe08a', '#6b4c10'], speed: .84, mass: 1.25, power: 1.16, jump: 1, maxHp: 115 },
-    kage:   { name: 'KID DYNAMO', title: 'Flashy Speedster', mark: 'KD', color: '#c084fc', skin: 'brown', hair: 2, trunks: ['#6d33b8', '#c9a2ff', '#32125c'], speed: 1.25, mass: .78, power: .9, jump: 1, maxHp: 85 },
-    duke:   { name: 'DUKE ELLIS', title: 'Slick Southpaw', mark: 'DE', color: '#f97316', skin: 'deep', hair: 1, trunks: ['#c2560f', '#ffa35c', '#5e2804'], speed: 1.08, mass: .98, power: 1.02, jump: 1, maxHp: 98 },
-    toro:   { name: 'EL TORO', title: 'Body Puncher', mark: 'ET', color: '#84cc16', skin: 'tan', hair: 0, trunks: ['#4d7c0f', '#b6f25a', '#22380a'], speed: .95, mass: 1.15, power: 1.12, jump: 1, maxHp: 108 },
-    finn:   { name: 'FINN DOYLE', title: 'Relentless Swarmer', mark: 'FD', color: '#e879f9', skin: 'light', hair: 1, trunks: ['#9d2fb0', '#f0a6fb', '#48115a'], speed: 1.16, mass: .9, power: .96, jump: 1, maxHp: 94 },
-    baba:   { name: 'BABA OKAFOR', title: 'Heavy-Handed Giant', mark: 'BO', color: '#14b8a6', skin: 'deep', hair: 2, trunks: ['#0f766e', '#5eead4', '#053b37'], speed: .8, mass: 1.42, power: 1.24, jump: 1, maxHp: 125 },
-    kuro:   { name: 'THE HAMMER', title: 'Undisputed Champion', mark: 'TH', color: '#ef4444', skin: 'deep', hair: 0, trunks: ['#1b1b1f', '#55555e', '#000000'], speed: .9, mass: 1.38, power: 1.2, jump: 1, maxHp: 120 }
+    shadow: { name: 'MANQ', title: 'South African Contender', mark: 'MQ', color: '#f1ede4', skin: 'brown', hair: 1, buildX: 1.00, buildY: 1.00, trunks: ['#dedad2', '#ffffff', '#8f8b84'], speed: 1, mass: 1, power: 1, jump: 1, maxHp: 100 },
+    akane:  { name: 'RICO VEGA', title: 'Counter-Puncher', mark: 'RV', color: '#34d399', skin: 'tan', hair: 2, buildX: .91, buildY: 1.03, trunks: ['#157a55', '#4fe0a6', '#083a28'], speed: 1.2, mass: .82, power: .92, jump: 1, maxHp: 88 },
+    raiden: { name: 'VOLKOV', title: 'Technical Out-Boxer', mark: 'VK', color: '#38bdf8', skin: 'light', hair: 1, buildX: .90, buildY: 1.04, trunks: ['#1f5fae', '#79b8ff', '#0c2a52'], speed: 1.12, mass: .95, power: 1.05, jump: 1, maxHp: 96 },
+    sensei: { name: 'BIG JOE', title: 'Iron-Chinned Slugger', mark: 'BJ', color: '#f5b942', skin: 'deep', hair: 0, buildX: 1.10, buildY: .99, trunks: ['#c8962e', '#ffe08a', '#6b4c10'], speed: .84, mass: 1.25, power: 1.16, jump: 1, maxHp: 115 },
+    kage:   { name: 'KID DYNAMO', title: 'Flashy Speedster', mark: 'KD', color: '#c084fc', skin: 'brown', hair: 2, buildX: .88, buildY: 1.06, trunks: ['#6d33b8', '#c9a2ff', '#32125c'], speed: 1.25, mass: .78, power: .9, jump: 1, maxHp: 85 },
+    duke:   { name: 'DUKE ELLIS', title: 'Slick Southpaw', mark: 'DE', color: '#f97316', skin: 'deep', hair: 1, buildX: 1.02, buildY: 1.02, trunks: ['#c2560f', '#ffa35c', '#5e2804'], speed: 1.08, mass: .98, power: 1.02, jump: 1, maxHp: 98 },
+    toro:   { name: 'EL TORO', title: 'Body Puncher', mark: 'ET', color: '#84cc16', skin: 'tan', hair: 0, buildX: 1.08, buildY: .99, trunks: ['#4d7c0f', '#b6f25a', '#22380a'], speed: .95, mass: 1.15, power: 1.12, jump: 1, maxHp: 108 },
+    finn:   { name: 'FINN DOYLE', title: 'Relentless Swarmer', mark: 'FD', color: '#e879f9', skin: 'light', hair: 1, buildX: .90, buildY: 1.04, trunks: ['#9d2fb0', '#f0a6fb', '#48115a'], speed: 1.16, mass: .9, power: .96, jump: 1, maxHp: 94 },
+    baba:   { name: 'BABA OKAFOR', title: 'Heavy-Handed Giant', mark: 'BO', color: '#14b8a6', skin: 'deep', hair: 2, buildX: 1.15, buildY: 1.00, trunks: ['#0f766e', '#5eead4', '#053b37'], speed: .8, mass: 1.42, power: 1.24, jump: 1, maxHp: 125 },
+    kuro:   { name: 'THE HAMMER', title: 'Undisputed Champion', mark: 'TH', color: '#ef4444', skin: 'deep', hair: 0, buildX: 1.10, buildY: .99, trunks: ['#1b1b1f', '#55555e', '#000000'], speed: .9, mass: 1.38, power: 1.2, jump: 1, maxHp: 120 }
   };
   const CHAR_IDS = Object.keys(CHARACTERS);
 
@@ -1767,37 +1767,37 @@
   // Career ladders: five ranked contenders, then the division champion (boss: true).
   const LIGHTWEIGHT_LADDER = [
     { name: 'TICO RAMOS',  character: 'akane',  title: 'Debutant',             weapon: 'unarmed',   aura: 'jade',    arena: 'dojo',   diff: 'easy',   boss: false, reward: 50 },
-    { name: 'SHAY BYRNE',  character: 'finn',   title: 'Club Fighter',         weapon: 'nunchucks', aura: 'ember',   arena: 'dojo',   diff: 'easy',   boss: false, reward: 60 },
-    { name: 'NICO PACE',   character: 'kage',   title: 'Prospect',             weapon: 'cobalt',    aura: 'azure',   arena: 'neon',   diff: 'easy',   boss: false, reward: 75 },
+    { name: 'SHAY BYRNE',  character: 'finn',   title: 'Club Fighter',         weapon: 'unarmed', aura: 'ember',   arena: 'dojo',   diff: 'easy',   boss: false, reward: 60 },
+    { name: 'NICO PACE',   character: 'kage',   title: 'Prospect',             weapon: 'unarmed',    aura: 'azure',   arena: 'neon',   diff: 'easy',   boss: false, reward: 75 },
     { name: 'DANTE CRUZ',  character: 'duke',   title: 'Gatekeeper',           weapon: 'unarmed',   aura: 'gold',    arena: 'sunset', diff: 'normal', boss: false, reward: 90 },
-    { name: 'LEO SANTANA', character: 'raiden', title: 'No.1 Contender',       weapon: 'staff',     aura: 'crimson', arena: 'neon',   diff: 'normal', boss: false, reward: 110 },
-    { name: 'EL RAYO',     character: 'akane',  title: 'Lightweight Champion', weapon: 'nunchucks', aura: 'gold',    arena: 'sunset', diff: 'normal', boss: true,  reward: 200 }
+    { name: 'LEO SANTANA', character: 'raiden', title: 'No.1 Contender',       weapon: 'unarmed',     aura: 'crimson', arena: 'neon',   diff: 'normal', boss: false, reward: 110 },
+    { name: 'EL RAYO',     character: 'akane',  title: 'Lightweight Champion', weapon: 'unarmed', aura: 'gold',    arena: 'sunset', diff: 'normal', boss: true,  reward: 200 }
   ];
   const HEAVYWEIGHT_LADDER = [
     { name: 'MACK DOZIER', character: 'sensei', title: 'Journeyman',           weapon: 'unarmed',   aura: 'azure',   arena: 'dojo',   diff: 'normal', boss: false, reward: 150 },
-    { name: 'OLEG PETROV', character: 'raiden', title: 'Contender',            weapon: 'staff',     aura: 'jade',    arena: 'neon',   diff: 'hard',   boss: false, reward: 170 },
-    { name: 'TANK WILLIS', character: 'toro',   title: 'Slugger',              weapon: 'sword',     aura: 'ember',   arena: 'dojo',   diff: 'hard',   boss: false, reward: 190 },
-    { name: 'SAMSON ADE',  character: 'duke',   title: 'Knockout Artist',      weapon: 'vintage',   aura: 'gold',    arena: 'sunset', diff: 'hard',   boss: false, reward: 210 },
-    { name: 'JONAH STONE', character: 'sensei', title: 'No.1 Contender',       weapon: 'sword',     aura: 'crimson', arena: 'neon',   diff: 'hard',   boss: false, reward: 230 },
-    { name: 'GOLIATH',     character: 'baba',   title: 'Heavyweight Champion', weapon: 'sword',     aura: 'gold',    arena: 'sunset', diff: 'hard',   boss: true,  reward: 400 }
+    { name: 'OLEG PETROV', character: 'raiden', title: 'Contender',            weapon: 'unarmed',     aura: 'jade',    arena: 'neon',   diff: 'hard',   boss: false, reward: 170 },
+    { name: 'TANK WILLIS', character: 'toro',   title: 'Slugger',              weapon: 'unarmed',     aura: 'ember',   arena: 'dojo',   diff: 'hard',   boss: false, reward: 190 },
+    { name: 'SAMSON ADE',  character: 'duke',   title: 'Knockout Artist',      weapon: 'unarmed',   aura: 'gold',    arena: 'sunset', diff: 'hard',   boss: false, reward: 210 },
+    { name: 'JONAH STONE', character: 'sensei', title: 'No.1 Contender',       weapon: 'unarmed',     aura: 'crimson', arena: 'neon',   diff: 'hard',   boss: false, reward: 230 },
+    { name: 'GOLIATH',     character: 'baba',   title: 'Heavyweight Champion', weapon: 'unarmed',     aura: 'gold',    arena: 'sunset', diff: 'hard',   boss: true,  reward: 400 }
   ];
   const MIDDLEWEIGHT_LADDER = [
     { name: 'ROOKIE RAY', character: 'shadow', title: 'Club Fighter',     weapon: 'unarmed',   aura: 'azure',   arena: 'dojo',   diff: 'easy',   boss: false, reward: 65 },
-    { name: 'RICO VEGA',  character: 'akane',  title: 'Counter-Puncher',  weapon: 'nunchucks', aura: 'jade',    arena: 'dojo',   diff: 'easy',   boss: false, reward: 85 },
-    { name: 'VOLKOV',     character: 'raiden', title: 'Out-Boxer',        weapon: 'staff',     aura: 'azure',   arena: 'neon',   diff: 'normal', boss: false, reward: 110 },
-    { name: 'BIG JOE',    character: 'sensei', title: 'Slugger',          weapon: 'sword',     aura: 'gold',    arena: 'sunset', diff: 'normal', boss: false, reward: 135 },
-    { name: 'FINN DOYLE', character: 'finn',   title: 'Swarmer',          weapon: 'nunchucks', aura: 'jade',    arena: 'dojo',   diff: 'normal', boss: false, reward: 145 },
-    { name: 'DUKE ELLIS', character: 'duke',   title: 'Slick Southpaw',   weapon: 'cobalt',    aura: 'gold',    arena: 'neon',   diff: 'normal', boss: false, reward: 155 },
-    { name: 'EL TORO',    character: 'toro',   title: 'Body Puncher',     weapon: 'vintage',   aura: 'ember',   arena: 'sunset', diff: 'hard',   boss: false, reward: 175 },
-    { name: 'KID DYNAMO', character: 'kage',   title: 'No.1 Contender',   weapon: 'nunchucks', aura: 'crimson', arena: 'neon',   diff: 'hard',   boss: false, reward: 165 },
-    { name: 'THE HAMMER', character: 'kuro',   title: 'World Champion',   weapon: 'sword',     aura: 'crimson', arena: 'sunset', diff: 'hard',   boss: true,  reward: 260 }
+    { name: 'RICO VEGA',  character: 'akane',  title: 'Counter-Puncher',  weapon: 'unarmed', aura: 'jade',    arena: 'dojo',   diff: 'easy',   boss: false, reward: 85 },
+    { name: 'VOLKOV',     character: 'raiden', title: 'Out-Boxer',        weapon: 'unarmed',     aura: 'azure',   arena: 'neon',   diff: 'normal', boss: false, reward: 110 },
+    { name: 'BIG JOE',    character: 'sensei', title: 'Slugger',          weapon: 'unarmed',     aura: 'gold',    arena: 'sunset', diff: 'normal', boss: false, reward: 135 },
+    { name: 'FINN DOYLE', character: 'finn',   title: 'Swarmer',          weapon: 'unarmed', aura: 'jade',    arena: 'dojo',   diff: 'normal', boss: false, reward: 145 },
+    { name: 'DUKE ELLIS', character: 'duke',   title: 'Slick Southpaw',   weapon: 'unarmed',    aura: 'gold',    arena: 'neon',   diff: 'normal', boss: false, reward: 155 },
+    { name: 'EL TORO',    character: 'toro',   title: 'Body Puncher',     weapon: 'unarmed',   aura: 'ember',   arena: 'sunset', diff: 'hard',   boss: false, reward: 175 },
+    { name: 'KID DYNAMO', character: 'kage',   title: 'No.1 Contender',   weapon: 'unarmed', aura: 'crimson', arena: 'neon',   diff: 'hard',   boss: false, reward: 165 },
+    { name: 'THE HAMMER', character: 'kuro',   title: 'World Champion',   weapon: 'unarmed',     aura: 'crimson', arena: 'sunset', diff: 'hard',   boss: true,  reward: 260 }
   ];
 
   // Weight divisions. Each has its own belt; lighter men are quicker, heavier men hit harder.
   const DIVISIONS = [
-    { name: 'Lightweight',  belt: 'Lightweight Championship',  limit: '135 lb',  color: '#c9c9c9', speed: 1.12, power: .9,   ladder: LIGHTWEIGHT_LADDER },
-    { name: 'Middleweight', belt: 'Middleweight Championship', limit: '160 lb',  color: '#d4af37', speed: 1,    power: 1,    ladder: MIDDLEWEIGHT_LADDER },
-    { name: 'Heavyweight',  belt: 'Heavyweight Championship',  limit: '200+ lb', color: '#e10613', speed: .92,  power: 1.18, ladder: HEAVYWEIGHT_LADDER }
+    { name: 'Lightweight',  belt: 'Last Round World Lightweight Championship',  limit: '135 lb',  color: '#c9c9c9', speed: 1.12, power: .9,   ladder: LIGHTWEIGHT_LADDER },
+    { name: 'Middleweight', belt: 'Last Round World Middleweight Championship', limit: '160 lb',  color: '#d4af37', speed: 1,    power: 1,    ladder: MIDDLEWEIGHT_LADDER },
+    { name: 'Heavyweight',  belt: 'Last Round World Heavyweight Championship',  limit: '200+ lb', color: '#e10613', speed: .92,  power: 1.18, ladder: HEAVYWEIGHT_LADDER }
   ];
 
   // Attack frame data (at speed = 1.0, scaled by weapon speed)
@@ -3787,7 +3787,7 @@
     }
 
     c.save();
-    c.translate(f.x, f.y); c.scale(S, S); c.translate(-f.x, -f.y);
+    c.translate(f.x, f.y); c.scale(S * (ch.buildX || 1), S * (ch.buildY || 1)); c.translate(-f.x, -f.y);
 
     // ---- Skeleton kinematics ----
     const hipX = f.x;
@@ -4098,7 +4098,7 @@
 
     // Render the articulated skeleton at cinematic scale, anchored at the feet.
     c.save();
-    c.translate(f.x, f.y); c.scale(S, S); c.translate(-f.x, -f.y);
+    c.translate(f.x, f.y); c.scale(S * (ch.buildX || 1), S * (ch.buildY || 1)); c.translate(-f.x, -f.y);
     let hipX = f.x;
     let hipY = f.y - 54 + p.hipY + f.recoil * .65;
     if (down) hipY = f.y - 16;
@@ -5036,7 +5036,8 @@
     const row = (label, a, b) => `<div class="fc-row"><b>${a}</b><span>${label}</span><b>${b}</b></div>`;
     wrap.innerHTML = `
       <div class="fc-divs">${tabs}</div>
-      <div class="fc-head"><span>${dv.name} Division</span><b>${status}</b></div>
+      <div class="fc-head"><span>${dv.name} Division · ${dv.belt}</span><b>${status}</b></div>
+      <div class="fc-meta" style="margin:8px 0;padding:10px 12px;border:1px solid rgba(245,185,66,.35);background:rgba(245,185,66,.08);border-radius:8px;line-height:1.45;color:#f4e7c2">MANQ’S ROAD TO THE BELT — Earn a ranking, defeat the mandatory challenger, then win the division title. Champions must defend their belt to build a legacy.</div>
       <div class="fc-tape">
         <div class="fc-side"><canvas class="fc-face" width="240" height="240" data-char="${heroId}"></canvas><strong>${me.name}</strong><small>${me.title}</small></div>
         <div class="fc-mid">
