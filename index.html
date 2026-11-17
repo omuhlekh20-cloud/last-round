@@ -1559,6 +1559,9 @@
       <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;">CORNER COLOUR &amp; TRUNK TRIM</div>
       <div class="grid-cards" id="shopAuras"></div>
 
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;">FIGHTER ACCESSORIES (EQUIP BY SLOT)</div>
+      <div class="grid-cards" id="shopAccessories"></div>
+
       <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;">CORNER GEAR (PERMANENT UPGRADES)</div>
       <div class="grid-cards" id="shopGear"></div>
     </div>
@@ -1671,12 +1674,12 @@
     HITSTOP_LIGHT: 3,
     HITSTOP_HEAVY: 6,
     MAX_JUGGLE: 2,
-    ROUND_TIME: 60,
+    ROUND_TIME: 90,
     ROUNDS_TO_WIN: 2,
     MAX_HP: 100,
     MAX_STAMINA: 100,
     MAX_ENERGY: 100,
-    STAMINA_REGEN: 24,       // per second when not blocking
+    STAMINA_REGEN: 21,       // per second when not blocking; slower pace rewards ringcraft
     BLOCK_STAMINA_COST: 22,
     PUSH_DIST: 92,
     GROUND_ACCEL: 1750,
@@ -1740,6 +1743,24 @@
       range: 1.14, speed: 1.0, dmgMul: 1.05, glove: ['#b98a1e', '#ffe08a', '#5c420a'],
       desc: 'Extended cuff and profile for jab-range control.',
       stats: { power: 76, speed: 76, reach: 100 }
+    },
+    onyx: {
+      id: 'onyx', name: 'Onyx Elite 10oz', cost: 420,
+      range: 1.02, speed: 1.12, dmgMul: 1.08, glove: ['#252832', '#9299a8', '#090b10'],
+      desc: 'Premium black leather with a balanced punch profile.',
+      stats: { power: 82, speed: 88, reach: 72 }
+    },
+    inferno: {
+      id: 'inferno', name: 'Inferno Power 12oz', cost: 480,
+      range: 1.0, speed: .96, dmgMul: 1.18, glove: ['#a51f16', '#ff9a55', '#4a0907'],
+      desc: 'Dense padding built for hard, committed shots.',
+      stats: { power: 94, speed: 66, reach: 70 }
+    },
+    storm: {
+      id: 'storm', name: 'Stormspeed 8oz', cost: 460,
+      range: 1.06, speed: 1.2, dmgMul: .94, glove: ['#236b83', '#8ce8f3', '#10303d'],
+      desc: 'Lightweight gloves for quick combinations and counters.',
+      stats: { power: 62, speed: 98, reach: 80 }
     }
   };
 
@@ -1748,7 +1769,9 @@
     jade:    { id: 'jade',    name: 'Emerald',        cost: 90,  color: '#34d399', desc: 'Green trim for the crowd favourite.' },
     azure:   { id: 'azure',   name: 'Blue Corner',    cost: 140, color: '#38bdf8', desc: 'Cool blue challenger trim.' },
     crimson: { id: 'crimson', name: 'Blood Crimson',  cost: 180, color: '#ef4444', desc: 'Deep crimson for finishers.' },
-    gold:    { id: 'gold',    name: 'Champion Gold',  cost: 280, color: '#f5b942', desc: 'Gold trim worn by title holders.' }
+    gold:    { id: 'gold',    name: 'Champion Gold',  cost: 280, color: '#f5b942', desc: 'Gold trim worn by title holders.' },
+    violet:  { id: 'violet',  name: 'Royal Violet',   cost: 220, color: '#a78bfa', desc: 'Purple satin trim with a royal finish.' },
+    ice:     { id: 'ice',     name: 'Arctic Silver',  cost: 300, color: '#b9e7f5', desc: 'Cool silver-blue championship trim.' }
   };
 
   // Corner gear: permanent upgrades for the player's boxer once bought.
@@ -1758,7 +1781,22 @@
     boots:  { id: 'boots',  name: 'Ring Boots',      cost: 160, desc: 'Move 8% faster around the ring.' },
     rope:   { id: 'rope',   name: 'Skipping Rope',   cost: 200, desc: 'Roadwork pays off: punches cost 25% less stamina.' },
     ice:    { id: 'ice',    name: 'Enswell & Ice',   cost: 220, desc: 'Shake off half of each punch instead of a third.' },
-    cutman: { id: 'cutman', name: 'Veteran Cutman',  cost: 240, desc: 'Recover 60% of lost health between rounds instead of 40%.' }
+    cutman: { id: 'cutman', name: 'Veteran Cutman',  cost: 240, desc: 'Recover 60% of lost health between rounds instead of 40%.' },
+    lung:   { id: 'lung',   name: 'Altitude Training', cost: 290, desc: 'Improve stamina recovery after exchanges.' },
+    core:   { id: 'core',   name: 'Core Conditioning', cost: 310, desc: 'Reduce body-shot fatigue buildup.' },
+    reflex: { id: 'reflex', name: 'Reflex Training', cost: 340, desc: 'Slightly shorten recovery after blocked punches.' }
+  };
+
+  // Cosmetic accessories are equipped by slot and visibly drawn on the 2D fighter.
+  const ACCESSORIES = {
+    redband:    { id: 'redband',    name: 'Crimson Fight Headband', slot: 'head',  cost: 110, color: '#d62828', desc: 'A bold red satin headband.' },
+    blueband:   { id: 'blueband',   name: 'Blue Corner Headband',   slot: 'head',  cost: 130, color: '#2878d0', desc: 'A clean blue fight-night headband.' },
+    goldband:   { id: 'goldband',   name: 'Champion Gold Band',     slot: 'head',  cost: 260, color: '#e0b43c', desc: 'A gold-trimmed headband for champions.' },
+    goldchain:  { id: 'goldchain',  name: 'Heavy Gold Chain',       slot: 'neck',  cost: 320, color: '#e0b43c', desc: 'A bright championship chain across the shoulders.' },
+    silverchain:{ id: 'silverchain',name: 'Silver Corner Chain',    slot: 'neck',  cost: 240, color: '#c7d0dc', desc: 'A polished silver necklace.' },
+    warpaint:   { id: 'warpaint',   name: 'War Paint',              slot: 'face',  cost: 180, color: '#d62828', desc: 'A distinctive stripe beneath the eye.' },
+    wristtape:  { id: 'wristtape',  name: 'Pro Wrist Tape',         slot: 'wrists',cost: 150, color: '#f2eee5', desc: 'Fresh white tape around both glove cuffs.' },
+    ankletape:  { id: 'ankletape',  name: 'Ring Ankle Wraps',       slot: 'ankles',cost: 170, color: '#d7dce5', desc: 'Supportive wraps above both boots.' }
   };
 
   const ARENAS = {
@@ -1871,6 +1909,8 @@
     unlockedAuras: ['ember'],
     equippedWeapon: 'unarmed',
     equippedAura: 'ember',
+    unlockedAccessories: [],
+    equippedAccessories: {},
     selectedCharacter: 'shadow',
     gear: [],
     // Career: per-division progress, belts held, successful defences, and who took a lost belt.
@@ -1893,6 +1933,11 @@
       return {
         ...structuredClone(defaultSave),
         ...parsed,
+        unlockedWeapons: Array.isArray(parsed.unlockedWeapons) ? parsed.unlockedWeapons : [...defaultSave.unlockedWeapons],
+        unlockedAuras: Array.isArray(parsed.unlockedAuras) ? parsed.unlockedAuras : [...defaultSave.unlockedAuras],
+        gear: Array.isArray(parsed.gear) ? parsed.gear : [],
+        unlockedAccessories: Array.isArray(parsed.unlockedAccessories) ? parsed.unlockedAccessories : [],
+        equippedAccessories: { ...defaultSave.equippedAccessories, ...(parsed.equippedAccessories || {}) },
         settings: { ...defaultSave.settings, ...(parsed.settings || {}) }
       };
     } catch {
@@ -2408,6 +2453,7 @@
       idx, name, x, y: CFG.GROUND_Y, vx: 0, vy: 0, facing,
       characterId, character,
       weaponId, auraId, isAI, isBoss,
+      accessories: (!isAI && idx === 0) ? { ...save.equippedAccessories } : {},
       hp: character.maxHp, trailHp: character.maxHp,
       stamina: CFG.MAX_STAMINA,
       energy: 0,
@@ -2440,7 +2486,13 @@
       swelling: 0,        // accumulates around the eyes after clean head shots
       bodyDamage: 0,      // cumulative body punishment for fatigue visuals
       shockFrames: 0,     // brief impact reaction / camera emphasis
-      regenMul: !isAI && idx === 0 && save.gear.includes('wraps') ? 1.2 : 1,
+      balance: 100,       // footing and ability to absorb clean impacts
+      rockedFrames: 0,    // temporary wobble after a damaging combination
+      impactSide: 0,      // direction the torso is displaced by the last hit
+      impactFrames: 0,    // visible hit reaction envelope
+      impactPower: 0,     // strength of the latest impact (0..1)
+      impactSlide: 0,     // short foot-skid offset after a clean shot
+      regenMul: !isAI && idx === 0 ? (save.gear.includes('wraps') ? 1.2 : 1) * (save.gear.includes('lung') ? 1.1 : 1) : 1,
       armor: !isAI && idx === 0 && save.gear.includes('guard') ? .92 : 1,
       cutman: !isAI && idx === 0 && save.gear.includes('cutman'),
       speedMul: !isAI && idx === 0 && save.gear.includes('boots') ? 1.08 : 1,
@@ -2484,6 +2536,8 @@
     f.state = 'idle'; f.stateTimer = 0; f.moveName = null; f.moveFrame = 0;
     f.comboCount = 0; f.comboTimer = 0; f.juggleCount = 0; f.chainQueued = null;
     f.ragePhase = false; f.invulnFrames = 0; f.guardStun = 0; f.recoil = 0;
+    f.balance = 100; f.rockedFrames = 0; f.impactSide = 0;
+    f.impactFrames = 0; f.impactPower = 0; f.impactSlide = 0;
     f.fallT = 0; f.fallFwd = false; f.duckTimer = 0; f.celebT = 0;
     f.pose = clonePose(POSES.idle);
     for (let i = 0; i < f.trail.length; i++) f.trail[i].active = false;
@@ -2653,6 +2707,15 @@
     if (f.invulnFrames > 0) f.invulnFrames--;
     if (f.guardStun > 0) f.guardStun--;
     f.recoil = approach(f.recoil, 0, 2.2);
+    if (f.rockedFrames > 0) f.rockedFrames--;
+    if (f.impactFrames > 0) f.impactFrames--;
+    f.impactPower = approach(f.impactPower || 0, 0, .035);
+    f.impactSlide = approach(f.impactSlide || 0, 0, 1.15);
+    // Footing gradually returns while a boxer is not being pressured. Body damage slows recovery.
+    if (f.state !== 'hit' && f.state !== 'knockdown' && f.state !== 'guardBreak') {
+      const balanceRegen = f.state === 'block' ? 3.5 : (f.state === 'idle' ? 13 : 7);
+      f.balance = Math.min(100, f.balance + balanceRegen * dt * (1 - (f.bodyDamage || 0) * .28));
+    }
     if (f.duckTimer > 0) f.duckTimer--;
 
     // Fall / get-up blend: legs give way and the body topples, then thuds onto the canvas.
@@ -2685,7 +2748,8 @@
     // Stamina regen when not blocking
     if (f.state !== 'block' && f.state !== 'guardBreak') {
       const regen = f.state === 'attack' || f.state === 'dash' ? .3 : 1;
-      f.stamina = Math.min(f.staminaCap, f.stamina + CFG.STAMINA_REGEN * regen * f.regenMul * dt);
+      const bodyFatigue = 1 - Math.min(.38, (f.bodyDamage || 0) * .38);
+      f.stamina = Math.min(f.staminaCap, f.stamina + CFG.STAMINA_REGEN * regen * f.regenMul * bodyFatigue * dt);
     }
 
     // Boss Rage Phase at <=40% HP
@@ -2906,7 +2970,9 @@
     const blocked = def.state === 'block' && !move.unblockable && move.type !== 'low' && def.facing !== att.facing;
     if (blocked) {
       def.stamina -= move.stamDmg;
-      const impulse = move.kbX * .38 / Math.sqrt(def.character.mass);
+      const guardEfficiency = Math.max(.22, def.stamina / CFG.MAX_STAMINA);
+      const impulse = move.kbX * (.24 + .18 * guardEfficiency) / Math.sqrt(def.character.mass);
+      def.balance = Math.max(0, def.balance - move.stamDmg * .42);
       def.vx = att.facing * impulse;
       att.vx -= att.facing * impulse * .35;
       att.energy = Math.min(CFG.MAX_ENERGY, att.energy + 6);
@@ -2922,7 +2988,7 @@
         emitSparks(hitX, hitY, att.facing, 12, '#e8e2d0');
         spawnDmgText(def.x, def.y - 126, 'GUARD BREAK!', '#ff2a2a', 1.15);
       } else {
-        def.guardStun = move.blkStun;
+        def.guardStun = Math.max(1, move.blkStun - (def.idx === 0 && save.gear.includes('reflex') ? 2 : 0));
         def.recoil = 4;
         Game.hitstop = CFG.HITSTOP_LIGHT;
         Game.shake = 4;
@@ -2935,8 +3001,12 @@
 
     // Direct Hit!
     const counter = def.state === 'attack';                        // caught mid-punch
-    const fatigue = .78 + .22 * att.stamina / CFG.MAX_STAMINA;     // arm-weary punches land softer
-    const dmg = Math.round(move.dmg * w.dmgMul * att.character.power * fatigue * .85 * def.armor * (att.powerMul || 1) *
+    const fatigue = .68 + .32 * att.stamina / CFG.MAX_STAMINA;     // exhausted arms lose snap and force
+    const distance = Math.abs(def.x - att.x);
+    const sweetSpot = move.range * w.range * .72;
+    const rangeQuality = distance <= sweetSpot ? 1 : Math.max(.72, 1 - (distance - sweetSpot) / Math.max(1, move.range * .95));
+    const drive = Math.min(1.18, .88 + Math.max(0, att.vx * att.facing) / 1500);
+    const dmg = Math.round(move.dmg * w.dmgMul * att.character.power * fatigue * rangeQuality * drive * .74 * def.armor * (att.powerMul || 1) *
       (counter ? 1.3 : 1) * (att.ragePhase ? 1.15 : 1));
     if (counter) spawnDmgText(def.x, def.y - 172 * CFG.FIGHTER_SCALE, 'COUNTER!', '#ffffff', 1.1);
     def.hp = Math.max(0, def.hp - dmg);
@@ -2944,7 +3014,7 @@
     def.lastHit = 0;
     const impactHeavy = move.type === 'heavy' || move.type === 'special' || move.type === 'throw';
     def.shockFrames = Math.max(def.shockFrames || 0, impactHeavy ? 18 : 10);
-    if (move.type === 'low') def.bodyDamage = Math.min(1, (def.bodyDamage || 0) + dmg / (def.character.maxHp * 1.8));
+    if (move.type === 'low') def.bodyDamage = Math.min(1, (def.bodyDamage || 0) + dmg / (def.character.maxHp * (def.idx === 0 && save.gear.includes('core') ? 2.35 : 1.8)));
     else if (move.type !== 'throw') def.swelling = Math.min(1, (def.swelling || 0) + dmg / (def.character.maxHp * 2.4));
     att.points += dmg;                                                               // clean punches score with the judges
     if (move.type === 'low') {                                                       // body work saps the gas tank
@@ -2958,6 +3028,15 @@
     att.comboTimer = 95;
 
     const isHeavy = move.type === 'heavy' || move.type === 'special' || move.type === 'throw';
+    // Clean impacts disrupt stance; repeated pressure can break balance even before the health bar empties.
+    const balanceDamage = (move.type === 'low' ? 13 : (isHeavy ? 24 : 11)) * (counter ? 1.22 : 1) * (1 + (def.bodyDamage || 0) * .22);
+    def.balance = Math.max(0, def.balance - balanceDamage);
+    def.impactSide = att.facing;
+    // Drive a readable, directional reaction through the whole articulated body.
+    def.impactFrames = Math.max(def.impactFrames || 0, isHeavy ? 24 : 17);
+    def.impactPower = Math.min(1, Math.max(def.impactPower || 0, isHeavy ? .95 : .62) + (counter ? .12 : 0));
+    def.impactSlide = Math.max(def.impactSlide || 0, isHeavy ? 17 : 9) * (def.character.mass > 1.2 ? .82 : 1);
+    if (def.balance < 28) def.rockedFrames = Math.max(def.rockedFrames, 38);
     Game.hitstop = isHeavy ? CFG.HITSTOP_HEAVY : CFG.HITSTOP_LIGHT;
     Game.shake = isHeavy ? 11 : 5;
     haptic(isHeavy ? 28 : 14);
@@ -2972,10 +3051,12 @@
     spawnDmgText(def.x, def.y - 145 * CFG.FIGHTER_SCALE, `-${dmg}`, isHeavy ? '#ff2a2a' : '#ffffff', isHeavy ? 1.2 : 1.0);
 
     // Knockback & State Transition
-    const momentum = Math.max(0, att.vx * att.facing) * .23;
-    def.vx = att.facing * (move.kbX + momentum) / Math.sqrt(def.character.mass);
-    att.vx -= att.facing * move.kbX * .12 / att.character.mass;
-    def.recoil = isHeavy ? 12 : 7;
+    const momentum = Math.max(0, att.vx * att.facing) * .30;
+    const balanceFactor = 1 + (100 - def.balance) / 260;
+    const impactForce = (move.kbX + momentum) * balanceFactor;
+    def.vx = att.facing * impactForce / Math.sqrt(def.character.mass);
+    att.vx -= att.facing * move.kbX * .16 / att.character.mass;
+    def.recoil = isHeavy ? 14 : 8;
     // Walking onto a counter or folding to a body shot drops him forward; otherwise he goes over backward.
     def.fallFwd = counter || att.moveName === 'sweep';
     if (!def.grounded || move.launch) {
@@ -2993,7 +3074,7 @@
       def.vy = -300 / Math.sqrt(def.character.mass);
       def.grounded = false;
       triggerRoundKO(att, def);
-    } else if (move.knockdown || (isHeavy && move.type !== 'throw' && def.hp < def.character.maxHp * .25)) {
+    } else if (move.knockdown || (isHeavy && move.type !== 'throw' && (def.hp < def.character.maxHp * .25 || def.balance <= 0))) {
       // Knockdown: the more hurt he is, the longer he stays down for the count (2 to 7).
       def.state = 'knockdown';
       def.downFrames = 0;
@@ -3013,7 +3094,7 @@
     } else {
       // A badly hurt boxer is rocked for longer by every clean shot.
       def.state = 'hit';
-      def.stateTimer = Math.round(move.hitstun * (def.hp < def.character.maxHp * .3 ? 1.35 : 1));
+      def.stateTimer = Math.round(move.hitstun * (def.hp < def.character.maxHp * .3 ? 1.35 : 1) * (def.balance < 28 ? 1.18 : 1));
     }
   }
 
@@ -3813,6 +3894,7 @@
     const glove = (WEAPONS[f.weaponId] || WEAPONS.unarmed).glove;
     const trunks = ch.trunks || BOOT;
     const trim = f.ragePhase ? '#ef4444' : (AURAS[f.auraId] || AURAS.ember).color;
+    const accessories = f.accessories || {};
     const ft = f.fallT * f.fallT * (3 - 2 * f.fallT);   // eased fall progress, 0 standing → 1 flat
     const down = ft > .55;
     const ld = f.fallFwd ? -dir : dir;                  // which way the legs end up pointing
@@ -4146,6 +4228,36 @@
       rate = 0.16;
     }
 
+    // Layer impact over the current action: torso twists away, chin snaps, guard opens,
+    // knees buckle and the feet skid. The envelope eases out into a visible stagger.
+    if (f.impactFrames > 0 && f.state !== 'knockdown' && f.state !== 'death' && f.state !== 'getup') {
+      const t = f.impactFrames / 24;
+      const wave = Math.sin(Math.min(1, t) * Math.PI);
+      const strength = (f.impactPower || .5) * (.38 + wave * .72);
+      const away = -(f.impactSide || -f.facing) * f.facing;
+      const rocked = (f.rockedFrames || 0) > 0 ? 1 : 0;
+      const hitPose = clonePose(target);
+      hitPose.torso += away * 25 * strength;
+      hitPose.head -= away * 18 * strength;
+      hitPose.hipY += 7 * strength + rocked * 5;
+      hitPose.shL += away * 15 * strength;
+      hitPose.shR += away * 21 * strength;
+      hitPose.elL += 10 * strength;
+      hitPose.elR += 13 * strength;
+      hitPose.kneeL += 17 * strength + rocked * 8;
+      hitPose.kneeR += 13 * strength + rocked * 10;
+      hitPose.hipL -= away * 8 * strength;
+      hitPose.hipR += away * 9 * strength;
+      if (rocked) {
+        const sway = Math.sin(f.animTime * 17) * 5;
+        hitPose.torso += sway;
+        hitPose.head -= sway * .65;
+        hitPose.hipY += Math.abs(sway) * .5;
+      }
+      target = hitPose;
+      rate = Math.max(rate, .34);
+    }
+
     lerpPose(f.pose, target, rate);
   }
 
@@ -4210,15 +4322,18 @@
     const kneeLX = hipX + Math.cos(hipLA) * thighLen;
     let kneeLY = hipY + Math.sin(hipLA) * thighLen;
     const shinLA = hipLA + (down ? dir * .18 : p.kneeL * dir * deg);
-    const footLX = kneeLX + Math.cos(shinLA) * shinLen;
+    let footLX = kneeLX + Math.cos(shinLA) * shinLen;
     let footLY = kneeLY + Math.sin(shinLA) * shinLen;
     const hipRA = down ? hipLA : (90 + p.hipR * dir) * deg;
     const kneeRX = hipX + Math.cos(hipRA) * thighLen;
     let kneeRY = hipY + Math.sin(hipRA) * thighLen;
     const shinRA = hipRA + (down ? dir * .12 : p.kneeR * dir * deg);
-    const footRX = kneeRX + Math.cos(shinRA) * shinLen;
+    let footRX = kneeRX + Math.cos(shinRA) * shinLen;
     let footRY = kneeRY + Math.sin(shinRA) * shinLen;
     if (f.grounded && !down && f.state !== 'victory') {
+      // A hit briefly drags the lead foot, with the rear foot following less to show weight transfer.
+      const skid = (f.impactSlide || 0) * (f.impactSide || -f.facing);
+      footLX += skid; footRX += skid * .42;
       const plant = f.y - Math.max(footLY, footRY);
       hipY += plant; shY += plant; headY += plant;
       kneeLY += plant; kneeRY += plant; footLY += plant; footRY += plant;
@@ -4322,6 +4437,13 @@
     c.fillStyle = trunks[1]; c.fillRect(hipX - 13, hipY - 4, 26, 4);
     c.fillStyle = '#f4f0e8'; c.fillRect(hipX - 2, hipY - 3, 4, 15);
 
+    const neckItem = ACCESSORIES[accessories.neck];
+    if (neckItem) {
+      c.save(); c.strokeStyle = neckItem.color; c.lineWidth = 2.8;
+      c.beginPath(); c.moveTo(shX - 7, shY + 5); c.quadraticCurveTo(hipX, hipY - 13, shX + 7, shY + 5); c.stroke();
+      c.fillStyle = neckItem.color; c.beginPath(); c.arc(hipX, hipY - 8, 3.2, 0, Math.PI * 2); c.fill(); c.restore();
+    }
+
     // Character-specific headgear and cloth silhouettes.
     switch (f.character.style) {
       case 'hat':
@@ -4349,6 +4471,18 @@
     }
 
 
+    // Player cosmetic accessories: headwear and face details follow the head pose.
+    const headItem = ACCESSORIES[accessories.head];
+    if (headItem) {
+      c.save(); c.strokeStyle = headItem.color; c.lineWidth = 5.2; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(headX - 10, headY - 7); c.quadraticCurveTo(headX, headY - 10, headX + 10, headY - 7); c.stroke();
+      c.fillStyle = headItem.color; c.beginPath(); c.moveTo(headX - 8, headY - 9); c.lineTo(headX - 17, headY - 13); c.lineTo(headX - 11, headY - 3); c.closePath(); c.fill();
+      c.restore();
+    }
+    if (accessories.face === 'warpaint') {
+      c.save(); c.strokeStyle = ACCESSORIES.warpaint.color; c.lineWidth = 2.8;
+      c.beginPath(); c.moveTo(headX + dir * 2, headY + 1); c.lineTo(headX + dir * 10, headY + 4); c.stroke(); c.restore();
+    }
     // Visible face profile: brow, eye, nose and mouth remain legible at game zoom.
     c.save();
     c.fillStyle = '#241611';
@@ -4394,6 +4528,13 @@
       c.beginPath(); c.moveTo(-3.5, -2); c.quadraticCurveTo(1, -5, 4, -1); c.stroke();
       c.restore();
     }
+    if (accessories.wrists === 'wristtape') {
+      c.save(); c.strokeStyle = ACCESSORIES.wristtape.color; c.lineWidth = 3.2;
+      for (const wrist of [[handLX, handLY], [handRX, handRY]]) {
+        c.beginPath(); c.moveTo(wrist[0] - 4, wrist[1] + 4); c.lineTo(wrist[0] + 4, wrist[1] + 4); c.stroke();
+      }
+      c.restore();
+    }
     // High-contrast boots anchor footwork and make stance changes readable.
     for (const footPoint of [[footLX, footLY], [footRX, footRY]]) {
       c.fillStyle = '#17191f'; c.strokeStyle = '#08090c'; c.lineWidth = 1.8;
@@ -4401,6 +4542,13 @@
       c.fillStyle = trunks[1]; c.fillRect(footPoint[0] - 3, footPoint[1] - 2, 5, 2);
     }
 
+    if (accessories.ankles === 'ankletape') {
+      c.save(); c.strokeStyle = ACCESSORIES.ankletape.color; c.lineWidth = 3.1;
+      for (const ankle of [[footLX, footLY], [footRX, footRY]]) {
+        c.beginPath(); c.moveTo(ankle[0] - 4, ankle[1] - 4); c.lineTo(ankle[0] + 4, ankle[1] - 4); c.stroke();
+      }
+      c.restore();
+    }
     // Weapons are attached to the hand and have curved blades / metal fittings.
     let tipX = handRX, tipY = handRY;
     if (f.weaponId === 'sword') {
@@ -5437,6 +5585,45 @@
       });
       drawTrunksIcon(card.querySelector('canvas'), a.color);
       aGrid.appendChild(card);
+    });
+
+    // Accessories: purchase once, then equip independently in head/neck/face/wrist/ankle slots.
+    const xGrid = document.getElementById('shopAccessories');
+    xGrid.innerHTML = '';
+    Object.values(ACCESSORIES).forEach(a => {
+      const owned = save.unlockedAccessories.includes(a.id);
+      const eq = save.equippedAccessories[a.slot] === a.id;
+      const card = document.createElement('div');
+      card.className = `select-card ${eq ? 'selected' : ''}`;
+      card.innerHTML = `
+        <canvas class="item-img" width="160" height="110"></canvas>
+        <h4><span style="color:${a.color}">${a.name}</span> <span style="color:${eq ? '#34d399' : owned ? '#8bd5a8' : '#f5b942'};font-size:11px;">${eq ? 'EQUIPPED' : owned ? 'EQUIP' : a.cost + ' Coins'}</span></h4>
+        <p>${a.desc} <span style="color:var(--muted)">(${a.slot})</span></p>
+      `;
+      card.addEventListener('click', () => {
+        AudioSys.unlock(); AudioSys.playUI();
+        if (owned) {
+          if (save.equippedAccessories[a.slot] === a.id) delete save.equippedAccessories[a.slot];
+          else save.equippedAccessories[a.slot] = a.id;
+          persistSave();
+        } else if (save.coins >= a.cost) {
+          save.coins -= a.cost;
+          save.unlockedAccessories.push(a.id);
+          save.equippedAccessories[a.slot] = a.id;
+          persistSave();
+          showToast(`Purchased ${a.name}!`);
+        } else showToast(`Need ${a.cost - save.coins} more coins!`);
+        if (Game.p1) Game.p1.accessories = { ...save.equippedAccessories };
+        renderArmory(); refreshHomeStats();
+      });
+      const cv = card.querySelector('canvas'), c = cv.getContext('2d');
+      c.clearRect(0, 0, cv.width, cv.height); c.strokeStyle = a.color; c.fillStyle = a.color; c.lineWidth = 8; c.lineCap = 'round';
+      if (a.slot === 'head') { c.beginPath(); c.arc(80, 60, 30, Math.PI * 1.12, Math.PI * 1.88); c.stroke(); c.fillRect(48, 48, 8, 12); }
+      else if (a.slot === 'neck') { c.beginPath(); c.arc(80, 28, 34, .2, Math.PI - .2); c.stroke(); c.beginPath(); c.arc(80, 61, 6, 0, Math.PI * 2); c.fill(); }
+      else if (a.slot === 'face') { c.beginPath(); c.arc(80, 52, 30, 0, Math.PI * 2); c.stroke(); c.beginPath(); c.moveTo(82, 57); c.lineTo(111, 66); c.stroke(); }
+      else if (a.slot === 'wrists') { c.beginPath(); c.roundRect(28, 40, 42, 30, 8); c.roundRect(90, 40, 42, 30, 8); c.stroke(); }
+      else { c.beginPath(); c.roundRect(42, 26, 30, 65, 8); c.roundRect(88, 26, 30, 65, 8); c.stroke(); }
+      xGrid.appendChild(card);
     });
 
     // Corner gear: one-off purchases with permanent effects.
