@@ -1,0 +1,26 @@
+LAST ROUND — MANQ | MASTER BUILD TEST REPORT
+
+Package checks
+- Embedded JavaScript extracted and passed Node.js syntax checking.
+- ZIP archive integrity checked successfully.
+- Required project assets and PWA files present.
+- Service-worker cache bumped to last-round-v13-master-complete.
+
+Automated Chromium smoke test (local HTML loaded in a browser context)
+- Game page initialized and displayed its home screen.
+- Gym Shop opened successfully.
+- 22 accessory cards rendered.
+- 9 gear cards rendered.
+- 9 glove/weapon cards rendered.
+- Test currency was seeded in an isolated test save.
+- Successfully purchased/equipped one item in each slot: head, neck, face, wrists and ankles.
+- Save data contained all five equipped slot IDs.
+- Started a Quick Fight; fight HUD and 1440 x 1000 game canvas initialized.
+- Screenshot inspection confirmed headband, chain, face mark, wrist tape and ankle wraps visibly rendered on the player fighter in the actual fight renderer.
+- Career / Title Run setup opened; career challenge, AI tier, reward and roster cards rendered.
+- No browser page errors or console errors were reported in the smoke tests.
+
+Limitations
+- This was a browser smoke test, not a full multi-round playtest.
+- Full career progression, every AI difficulty, all 22 accessory combinations, mobile touch controls and offline installation were not exhaustively tested.
+- The live GitHub Pages site has not been updated by this package creation.

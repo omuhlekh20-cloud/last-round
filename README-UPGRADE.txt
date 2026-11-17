@@ -1,41 +1,58 @@
-LAST ROUND — MANQ (2D)
+LAST ROUND — MANQ | COMPLETE 2D MASTER BUILD
 
-This is the updated 2D project package. Keep all files in the same folder when testing locally.
+This is the consolidated project package containing the improvements developed across the earlier art, career, physics, impact, round-length and shop updates. It remains the original 2D canvas game; it has not been converted to 3D.
 
-Career challenge update:
-- Added two additional ranked opponents before each division champion (six extra fights across the three divisions).
-- Career AI now escalates through Easy, Normal, Hard, Elite and Nightmare tiers as the player climbs.
-- Later opponents gain carefully increasing health, speed and punch power; title defences and title rematches use Nightmare AI.
-- Added a visible challenge label, AI tier and coin reward to the career fight card.
+INCLUDED SYSTEMS
 
-Latest fight-feel and bout-length update:
-- Clean hits now trigger directional torso rotation, head snap, shoulder/guard recoil and knee buckling, blended over the fighter's current pose.
-- Fighters briefly skid their feet on impact, with heavier shots producing a stronger slide; low balance adds a visible stagger sway.
-- Round duration increased from 60 to 90 seconds.
-- Clean-hit damage reduced modestly to extend exchanges while retaining counters, heavy-hit impact, knockdowns and existing balance mechanics.
-- Stamina regeneration is slightly slower to make pacing and recovery matter over longer rounds.
+1. Fighter art and presentation
+- Cleaner, more readable 2D fighter designs with clearer faces, skin tones, anatomy, gloves, trunks and boots.
+- Improved visual distinction between fighters while retaining the game's original style and roster.
+- Existing arena presentation, effects, audio and installable PWA assets retained.
 
-Existing visual/combat enhancements retained:
-- Fighters visibly accumulate eye swelling and body-shot wear during a bout.
-- Sweat highlights become more noticeable as stamina falls.
-- Clean impacts trigger a brief visual shock highlight.
-- Opponent AI tracks repeated player punch patterns and becomes slightly better at reading them, while retaining its existing style and difficulty differences.
-- Existing career progression, fighter roster, arena art, sound, controls, and installable PWA assets are preserved.
+2. Career and roster progression
+- Six additional ranked opponents across the three division ladders.
+- More visible career challenge labels, AI tier and coin reward on the fight card.
+- AI difficulty progresses through Easy, Normal, Hard, Elite and Nightmare.
+- Later opponents receive controlled health, speed and power scaling.
+- Title fights, title defences and rematches become more demanding.
 
+3. Fighting physics and impact animation
+- Balance and stamina respond to clean hits, blocking and body damage.
+- Punch impact factors include stamina fatigue, punch range quality and forward momentum.
+- Heavy shots create stronger knockback and can cause knockdowns when balance is depleted.
+- Visible directional torso rotation, head snap, shoulder/guard recoil, knee buckling and stagger recovery.
+- Impact foot sliding and stronger movement from heavier shots.
+- Existing swelling, cuts, sweat, hit sparks and impact emphasis retained.
 
-Expanded Gym Shop update:
-- Added eight wearable cosmetics: three headbands, two chains, war paint, wrist tape and ankle wraps.
-- Accessories use separate equipment slots, so the player can combine a head item, neck item, face detail, wrist tape and ankle wraps.
-- Accessories are visibly rendered on the player's 2D fighter and are saved between sessions. Existing save data is migrated with empty accessory slots; previous purchases and career progress are retained.
-- Added three glove sets: Onyx Elite, Inferno Power and Stormspeed.
-- Added Royal Violet and Arctic Silver trunk-trim colours.
-- Added three permanent gym upgrades: Altitude Training (stamina recovery), Core Conditioning (less body-shot fatigue) and Reflex Training (shorter stun after blocking).
-- Updated the offline cache version so installed copies can fetch the new shop build.
+4. Longer bouts
+- Round timer increased from 60 to 90 seconds.
+- Clean-hit damage adjusted modestly to allow longer exchanges.
+- Stamina regeneration slowed slightly to reward pacing and ringcraft.
 
-Deployment:
-1. Extract the ZIP.
-2. Upload/replace the files in the root of the existing GitHub Pages repository.
-3. Commit the changes and allow GitHub Pages to rebuild.
-4. Refresh the site; if the old version remains cached, close the installed app/browser tab and reload.
+5. Gym shop and equipment
+- 22 wearable accessories across head, neck, face, wrists and ankles.
+- Three additional glove sets: Onyx Elite, Inferno Power and Stormspeed.
+- Additional trunk trims: Royal Violet and Arctic Silver.
+- Three permanent training upgrades: Altitude Training, Core Conditioning and Reflex Training.
+- Accessory purchases and equipped slots are saved in the existing local save.
+- Equipped cosmetics are drawn on the active player's fighter in the live fight renderer. A rendering bug in the prior shop package was corrected in this master build.
 
-Validation: embedded JavaScript passed Node.js syntax checking and ZIP integrity was checked. This package has not been play-tested in a full browser session, so please test a full career run on desktop and mobile after deployment.
+6. Existing game modes and features
+- Career / Title Run.
+- Quick Fight.
+- Local 2-Player.
+- Existing roster, controls, weapons, auras, arenas, sound and save progression.
+
+PUBLISHING TO GITHUB PAGES
+1. Make a backup of the current repository before replacing files.
+2. Extract this ZIP.
+3. Upload all extracted root files into the root of the existing GitHub Pages repository, replacing files with the same names.
+4. Commit and push the changes.
+5. Wait for GitHub Pages to finish deploying, then hard-refresh the game.
+6. If an installed/offline copy still shows the old build, close it fully and reopen it so the new service-worker cache (v13 master) can activate.
+
+SAVE DATA
+The game continues using its existing localStorage save key and migration defaults. Existing local progress should remain on the same browser/device. As always, back up the current project and avoid clearing browser site data when updating.
+
+TESTING
+See MASTER-TEST-REPORT.txt for the checks completed on this package. A local browser smoke test was completed for shop rendering, purchasing/equipping all five accessory slots, fighter rendering in a live quick fight, career setup, and JavaScript runtime errors. A complete long-form career playthrough across all divisions has not been performed.

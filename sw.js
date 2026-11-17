@@ -1,5 +1,5 @@
 /* Last Round — offline app cache. Bump CACHE when publishing an update. */
-const CACHE = 'last-round-v12-expanded-shop-accessories';
+const CACHE = 'last-round-v13-master-complete';
 const CORE = [
   './', './index.html', './manifest.webmanifest',
   './icon.svg', './icon-192.png', './icon-512.png',

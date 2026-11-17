@@ -1559,7 +1559,7 @@
       <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;">CORNER COLOUR &amp; TRUNK TRIM</div>
       <div class="grid-cards" id="shopAuras"></div>
 
-      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;">FIGHTER ACCESSORIES (EQUIP BY SLOT)</div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;">FIGHTER ACCESSORIES · 22 ITEMS · EQUIP BY SLOT</div>
       <div class="grid-cards" id="shopAccessories"></div>
 
       <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;">CORNER GEAR (PERMANENT UPGRADES)</div>
@@ -1796,7 +1796,21 @@
     silverchain:{ id: 'silverchain',name: 'Silver Corner Chain',    slot: 'neck',  cost: 240, color: '#c7d0dc', desc: 'A polished silver necklace.' },
     warpaint:   { id: 'warpaint',   name: 'War Paint',              slot: 'face',  cost: 180, color: '#d62828', desc: 'A distinctive stripe beneath the eye.' },
     wristtape:  { id: 'wristtape',  name: 'Pro Wrist Tape',         slot: 'wrists',cost: 150, color: '#f2eee5', desc: 'Fresh white tape around both glove cuffs.' },
-    ankletape:  { id: 'ankletape',  name: 'Ring Ankle Wraps',       slot: 'ankles',cost: 170, color: '#d7dce5', desc: 'Supportive wraps above both boots.' }
+    ankletape:  { id: 'ankletape',  name: 'Ring Ankle Wraps',       slot: 'ankles',cost: 170, color: '#d7dce5', desc: 'Supportive wraps above both boots.' },
+    blackband:  { id: 'blackband',  name: 'Midnight Headband',      slot: 'head',  cost: 145, color: '#242832', desc: 'A matte-black training headband.' },
+    whiteband:  { id: 'whiteband',  name: 'White Corner Headband',  slot: 'head',  cost: 155, color: '#f0eee8', desc: 'Clean white fight-night satin.' },
+    emeraldband:{ id: 'emeraldband',name: 'Emerald Champion Band',  slot: 'head',  cost: 230, color: '#19a878', desc: 'An emerald-green championship band.' },
+    emeraldchain:{id:'emeraldchain',name:'Emerald Pendant Chain',  slot: 'neck',  cost: 290, color: '#21b88b', desc: 'A green corner chain with a bright pendant.' },
+    platinumchain:{id:'platinumchain',name:'Platinum Rope Chain',   slot: 'neck',  cost: 390, color: '#dce5ef', desc: 'A bright premium rope chain.' },
+    bluewarpaint:{id:'bluewarpaint',name:'Blue Corner Face Stripe', slot: 'face',  cost: 165, color: '#36a8ff', desc: 'A blue stripe beneath the eye.' },
+    goldmark:   { id: 'goldmark',   name: 'Gold Fight Mark',        slot: 'face',  cost: 250, color: '#e7bd4b', desc: 'A gold mark for a champion entrance.' },
+    redwraps:   { id: 'redwraps',   name: 'Red Knuckle Wraps',      slot: 'wrists',cost: 165, color: '#d93636', desc: 'Red wraps visible above both gloves.' },
+    bluewraps:  { id: 'bluewraps',  name: 'Blue Knuckle Wraps',     slot: 'wrists',cost: 165, color: '#2878d0', desc: 'Blue wraps visible above both gloves.' },
+    goldwraps:  { id: 'goldwraps',  name: 'Gold Championship Wraps',slot:'wrists',cost: 280, color: '#e0b43c', desc: 'Gold-trimmed wrist wraps.' },
+    blackwraps: { id: 'blackwraps',name: 'Blackout Wrist Tape',    slot: 'wrists',cost: 190, color: '#252a34', desc: 'Dark wrist tape for a stripped-back look.' },
+    redankles:  { id: 'redankles', name: 'Crimson Ankle Tape',     slot: 'ankles',cost: 155, color: '#d93636', desc: 'Red tape around both ankles.' },
+    blueankles: { id: 'blueankles',name: 'Blue Ankle Tape',        slot: 'ankles',cost: 155, color: '#2878d0', desc: 'Blue tape around both ankles.' },
+    goldankles: { id: 'goldankles',name: 'Gold Ankle Guards',      slot: 'ankles',cost: 245, color: '#e0b43c', desc: 'Gold ankle bands for a champion look.' }
   };
 
   const ARENAS = {
@@ -4098,6 +4112,58 @@
     sketchLimb(c, elRX, elRY, handRX, handRY, 5.8, 4.7, skin, boil + 17);
     if (f.energy >= CFG.MAX_ENERGY) { c.shadowColor = trim; c.shadowBlur = 12; }   // K.O. punch ready
     drawGlove(c, elRX, elRY, handRX, handRY, glove, boil + 18);
+
+    // ---- Equipped player cosmetics (drawn in the live renderer used by fights) ----
+    // Neck chains sit across the collar/upper chest and follow torso rotation.
+    const neckItem = ACCESSORIES[accessories.neck];
+    if (neckItem && !down) {
+      c.save(); c.strokeStyle = neckItem.color; c.lineWidth = 2.8; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(shX - 7, shY + 4);
+      c.quadraticCurveTo(hipX, hipY - 12, shX + 7, shY + 4); c.stroke();
+      c.fillStyle = neckItem.color; c.beginPath(); c.arc(hipX, hipY - 7, 3.2, 0, Math.PI * 2); c.fill(); c.restore();
+    }
+    // Headbands are layered over hair so they remain visible on every fighter style.
+    const headItem = ACCESSORIES[accessories.head];
+    if (headItem && !down) {
+      c.save(); c.strokeStyle = headItem.color; c.lineWidth = 5.2; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(headX - 10, headY - 6.5);
+      c.quadraticCurveTo(headX, headY - 10, headX + 10, headY - 6.5); c.stroke();
+      c.fillStyle = headItem.color; c.beginPath();
+      c.moveTo(headX - 8, headY - 8); c.lineTo(headX - 17, headY - 12);
+      c.lineTo(headX - 11, headY - 2.5); c.closePath(); c.fill(); c.restore();
+    }
+    const faceItem = ACCESSORIES[accessories.face];
+    if (faceItem && !down) {
+      c.save(); c.strokeStyle = faceItem.color; c.lineWidth = faceItem.id === 'goldmark' ? 3.8 : 2.8;
+      c.lineCap = 'round'; c.beginPath(); c.moveTo(headX + dir, headY + 1);
+      c.lineTo(headX + dir * 11, headY + 4); c.stroke();
+      if (faceItem.id === 'goldmark') {
+        c.beginPath(); c.moveTo(headX + dir * 4, headY - 2);
+        c.lineTo(headX + dir * 9, headY + 1); c.stroke();
+      }
+      c.restore();
+    }
+    // Wrist tape is placed just outside each glove cuff, not hidden beneath the mitts.
+    const wristItem = ACCESSORIES[accessories.wrists];
+    if (wristItem && !down) {
+      c.save(); c.strokeStyle = wristItem.color; c.lineWidth = 3.6; c.lineCap = 'round';
+      for (const wrist of [[handLX, handLY], [handRX, handRY]]) {
+        const wx = wrist[0] - dir * 7;
+        c.beginPath(); c.moveTo(wx - 4, wrist[1] + 2); c.lineTo(wx + 4, wrist[1] + 2); c.stroke();
+        c.beginPath(); c.moveTo(wx - 3.5, wrist[1] + 5); c.lineTo(wx + 3.5, wrist[1] + 5); c.stroke();
+      }
+      c.restore();
+    }
+    // Ankle wraps follow both feet and remain visible above the boot line.
+    const ankleItem = ACCESSORIES[accessories.ankles];
+    if (ankleItem && !down) {
+      c.save(); c.strokeStyle = ankleItem.color; c.lineWidth = 3.2; c.lineCap = 'round';
+      for (const ankle of [[footLX, footLY], [footRX, footRY]]) {
+        c.beginPath(); c.moveTo(ankle[0] - 5, ankle[1] - 4); c.lineTo(ankle[0] + 5, ankle[1] - 4); c.stroke();
+        c.beginPath(); c.moveTo(ankle[0] - 4, ankle[1] - 1); c.lineTo(ankle[0] + 4, ankle[1] - 1); c.stroke();
+      }
+      c.restore();
+    }
     c.restore();
 
     // ---- Cache world-space joints for hurtboxes, hit sparks and trails ----
@@ -4479,9 +4545,12 @@
       c.fillStyle = headItem.color; c.beginPath(); c.moveTo(headX - 8, headY - 9); c.lineTo(headX - 17, headY - 13); c.lineTo(headX - 11, headY - 3); c.closePath(); c.fill();
       c.restore();
     }
-    if (accessories.face === 'warpaint') {
-      c.save(); c.strokeStyle = ACCESSORIES.warpaint.color; c.lineWidth = 2.8;
-      c.beginPath(); c.moveTo(headX + dir * 2, headY + 1); c.lineTo(headX + dir * 10, headY + 4); c.stroke(); c.restore();
+    const faceItem = ACCESSORIES[accessories.face];
+    if (faceItem) {
+      c.save(); c.strokeStyle = faceItem.color; c.lineWidth = faceItem.id === 'goldmark' ? 3.8 : 2.8;
+      c.beginPath(); c.moveTo(headX + dir * 1, headY + 1); c.lineTo(headX + dir * 11, headY + 4); c.stroke();
+      if (faceItem.id === 'goldmark') { c.beginPath(); c.moveTo(headX + dir * 4, headY - 2); c.lineTo(headX + dir * 9, headY + 1); c.stroke(); }
+      c.restore();
     }
     // Visible face profile: brow, eye, nose and mouth remain legible at game zoom.
     c.save();
@@ -4528,10 +4597,12 @@
       c.beginPath(); c.moveTo(-3.5, -2); c.quadraticCurveTo(1, -5, 4, -1); c.stroke();
       c.restore();
     }
-    if (accessories.wrists === 'wristtape') {
-      c.save(); c.strokeStyle = ACCESSORIES.wristtape.color; c.lineWidth = 3.2;
+    const wristItem = ACCESSORIES[accessories.wrists];
+    if (wristItem) {
+      c.save(); c.strokeStyle = wristItem.color; c.lineWidth = 3.6;
       for (const wrist of [[handLX, handLY], [handRX, handRY]]) {
-        c.beginPath(); c.moveTo(wrist[0] - 4, wrist[1] + 4); c.lineTo(wrist[0] + 4, wrist[1] + 4); c.stroke();
+        c.beginPath(); c.moveTo(wrist[0] - 5, wrist[1] + 4); c.lineTo(wrist[0] + 5, wrist[1] + 4); c.stroke();
+        c.beginPath(); c.moveTo(wrist[0] - 4, wrist[1] + 1); c.lineTo(wrist[0] + 4, wrist[1] + 1); c.stroke();
       }
       c.restore();
     }
@@ -4542,10 +4613,12 @@
       c.fillStyle = trunks[1]; c.fillRect(footPoint[0] - 3, footPoint[1] - 2, 5, 2);
     }
 
-    if (accessories.ankles === 'ankletape') {
-      c.save(); c.strokeStyle = ACCESSORIES.ankletape.color; c.lineWidth = 3.1;
+    const ankleItem = ACCESSORIES[accessories.ankles];
+    if (ankleItem) {
+      c.save(); c.strokeStyle = ankleItem.color; c.lineWidth = 3.2;
       for (const ankle of [[footLX, footLY], [footRX, footRY]]) {
-        c.beginPath(); c.moveTo(ankle[0] - 4, ankle[1] - 4); c.lineTo(ankle[0] + 4, ankle[1] - 4); c.stroke();
+        c.beginPath(); c.moveTo(ankle[0] - 5, ankle[1] - 4); c.lineTo(ankle[0] + 5, ankle[1] - 4); c.stroke();
+        c.beginPath(); c.moveTo(ankle[0] - 4, ankle[1] - 1); c.lineTo(ankle[0] + 4, ankle[1] - 1); c.stroke();
       }
       c.restore();
     }
