@@ -1814,6 +1814,21 @@
     { name: 'THE HAMMER', character: 'kuro',   title: 'World Champion',   weapon: 'unarmed',     aura: 'crimson', arena: 'sunset', diff: 'hard',   boss: true,  reward: 260 }
   ];
 
+
+  // Extra career bouts: these are inserted before each champion, extending every title run.
+  LIGHTWEIGHT_LADDER.splice(-1, 0,
+    { name: 'MALIK “THE NEEDLE” JONES', character: 'kage', title: 'Regional Eliminator', weapon: 'unarmed', aura: 'azure', arena: 'neon', diff: 'hard', boss: false, reward: 135 },
+    { name: 'SANTIAGO REYES', character: 'duke', title: 'Former Champion', weapon: 'unarmed', aura: 'gold', arena: 'sunset', diff: 'elite', boss: false, reward: 165 }
+  );
+  MIDDLEWEIGHT_LADDER.splice(-1, 0,
+    { name: 'MARCUS “IRON” COLE', character: 'baba', title: 'Regional Eliminator', weapon: 'unarmed', aura: 'ember', arena: 'dojo', diff: 'hard', boss: false, reward: 190 },
+    { name: 'ADRIAN VALE', character: 'raiden', title: 'Former World Champion', weapon: 'unarmed', aura: 'azure', arena: 'neon', diff: 'elite', boss: false, reward: 220 }
+  );
+  HEAVYWEIGHT_LADDER.splice(-1, 0,
+    { name: 'BRICK WALL BROWN', character: 'sensei', title: 'Regional Eliminator', weapon: 'unarmed', aura: 'gold', arena: 'dojo', diff: 'hard', boss: false, reward: 255 },
+    { name: 'IVAN “THE ANVIL” DRAGO', character: 'kuro', title: 'Former World Champion', weapon: 'unarmed', aura: 'crimson', arena: 'sunset', diff: 'elite', boss: false, reward: 300 }
+  );
+
   // Weight divisions. Each has its own belt; lighter men are quicker, heavier men hit harder.
   const DIVISIONS = [
     { name: 'Lightweight',  belt: 'WBC · WBA · IBF · WBO Lightweight titles',  limit: '135 lb',  color: '#c9c9c9', speed: 1.12, power: .9,   ladder: LIGHTWEIGHT_LADDER },
@@ -3006,9 +3021,12 @@
      8. AI OPPONENT STATE MACHINE
      ========================================================================== */
   const AI_PRESETS = {
-    easy:   { reactFrames: 20, blockProb: 0.30, comboProb: 0.38, aggro: 0.46, readProb: 0.12 },
-    normal: { reactFrames: 12, blockProb: 0.52, comboProb: 0.62, aggro: 0.64, readProb: 0.30 },
-    hard:   { reactFrames: 7,  blockProb: 0.72, comboProb: 0.82, aggro: 0.78, readProb: 0.48 }
+    easy:      { reactFrames: 20, blockProb: 0.30, comboProb: 0.38, aggro: 0.46, readProb: 0.12 },
+    normal:    { reactFrames: 12, blockProb: 0.52, comboProb: 0.62, aggro: 0.64, readProb: 0.30 },
+    hard:      { reactFrames: 7,  blockProb: 0.72, comboProb: 0.82, aggro: 0.78, readProb: 0.48 },
+    elite:     { reactFrames: 5,  blockProb: 0.80, comboProb: 0.90, aggro: 0.86, readProb: 0.62 },
+    nightmare:{ reactFrames: 3,  blockProb: 0.87, comboProb: 0.96, aggro: 0.94, readProb: 0.76 },
+    legend:    { reactFrames: 2,  blockProb: 0.91, comboProb: 0.98, aggro: 0.98, readProb: 0.84 }
   };
 
   // Each opponent has a recognisable boxing identity. These profiles change
@@ -4559,6 +4577,19 @@
       Game.difficulty = stage.diff;
       Game.p1 = createFighter(0, hero.name, 330, 1, save.equippedWeapon, save.equippedAura, false, false, heroId);
       Game.p2 = createFighter(1, stage.name, 790, -1, stage.weapon, stage.aura, true, !!stage.boss, stage.character);
+      // Career scaling: later opponents are fitter, quicker and hit harder; the player must improve too.
+      const climb = stage.aiBoost || 0;
+      if (climb > 0) {
+        const ai = Game.p2;
+        const hpBoost = 1 + climb * 0.72;
+        ai.character = { ...ai.character, maxHp: Math.round(ai.character.maxHp * hpBoost) };
+        ai.hp = ai.trailHp = ai.character.maxHp;
+        ai.speedMul *= 1 + climb * 0.42;
+        ai.powerMul = 1 + climb * 0.62;
+        ai.armor = Math.max(0.78, 1 - climb * 0.35);
+        ai.staminaCap = Math.min(CFG.MAX_STAMINA, CFG.MAX_STAMINA * (1 + climb * 0.3));
+        ai.stamina = ai.staminaCap;
+      }
       // Division physics: lighter men are quicker, heavier men hit harder.
       Game.p1.speedMul *= dv.speed; Game.p2.speedMul *= dv.speed;
       Game.p1.powerMul = Game.p2.powerMul = dv.power;
@@ -5104,16 +5135,25 @@
   // challenger (if you hold the belt) or a rematch with the man who took it from you.
   function careerBout() {
     const cr = save.career, d = cr.division, dv = DIVISIONS[d], ladder = dv.ladder, last = ladder.length - 1;
+    let bout;
     if (cr.belts[d]) {
       const c = ladder[last - 1 - cr.defences[d] % last];
-      return { ...c, title: 'Mandatory Challenger', diff: 'hard', boss: false, reward: c.reward + 120, defence: true, titleFight: true };
-    }
-    if (cr.lostTo[d] != null) {
+      bout = { ...c, title: 'Mandatory Challenger', diff: 'nightmare', boss: false, reward: c.reward + 160, defence: true, titleFight: true };
+    } else if (cr.lostTo[d] != null) {
       const c = ladder[cr.lostTo[d]];
-      return { ...c, title: dv.name + ' Champion', diff: 'hard', boss: true, reward: c.reward + 150, titleFight: true };
+      bout = { ...c, title: dv.name + ' Champion', diff: 'nightmare', boss: true, reward: c.reward + 190, titleFight: true };
+    } else {
+      const idx = Math.min(cr.stage[d], last);
+      const c = ladder[idx];
+      const tier = idx >= last ? 'nightmare' : idx >= last - 2 ? 'elite' : idx >= 3 ? 'hard' : idx >= 2 ? 'normal' : c.diff;
+      bout = { ...c, diff: tier, titleFight: !!c.boss };
     }
-    const s = ladder[Math.min(cr.stage[d], last)];
-    return s.boss ? { ...s, titleFight: true } : s;
+    const idxNow = cr.belts[d] ? cr.defences[d] : Math.min(cr.stage[d], last);
+    const challengeNames = ['RISING PROSPECT', 'PRESSURE TEST', 'RANKED CONTENDER', 'RIVALRY NIGHT', 'ELIMINATOR BOUT', 'FORMER CHAMPION TEST', 'WORLD TITLE FIGHT'];
+    bout.challenge = bout.defence ? 'MANDATORY TITLE DEFENCE' : bout.titleFight ? 'WORLD TITLE FIGHT' : (challengeNames[Math.min(idxNow, challengeNames.length - 1)] || 'CAREER CHALLENGE');
+    bout.challengeNo = idxNow + 1;
+    bout.aiBoost = Math.min(0.24, Math.max(0, idxNow - 1) * 0.035) + (bout.diff === 'nightmare' ? 0.06 : 0);
+    return bout;
   }
 
   // How the fight ended, as it would be announced.
@@ -5204,6 +5244,10 @@
     wrap.innerHTML = `
       <div class="fc-divs">${tabs}</div>
       <div class="fc-head"><span>${dv.name} Division · ${dv.belt}</span><b>${status}</b></div>
+      <div class="fc-meta" style="margin-top:8px;padding:10px 12px;border:1px solid rgba(225,6,19,.55);border-radius:8px;background:linear-gradient(110deg,rgba(225,6,19,.18),rgba(12,12,14,.92));display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <strong style="color:#ff7777;letter-spacing:1px">${st.challenge || 'CAREER CHALLENGE'}</strong>
+        <span style="color:#f5d6a0;font-weight:900">AI LEVEL: ${(st.diff || 'normal').toUpperCase()} · REWARD ${st.reward} COINS</span>
+      </div>
       <div class="fc-meta" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
         ${['WBC','WBA','IBF','WBO'].map((org,n)=>`<span style="padding:5px 9px;border:1px solid rgba(245,185,66,.45);border-radius:5px;background:rgba(245,185,66,.08);font-weight:900;letter-spacing:1px;color:#f3d58b">${org} ${champ ? 'CHAMPION' : 'TITLE ROUTE'}</span>`).join('')}
       </div>

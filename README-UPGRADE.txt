@@ -2,7 +2,13 @@ LAST ROUND — MANQ (2D)
 
 This is the updated 2D project package. Keep all files in the same folder when testing locally.
 
-Enhancements in this update:
+Career challenge update:
+- Added two additional ranked opponents before each division champion (six extra fights across the three divisions).
+- Career AI now escalates through Easy, Normal, Hard, Elite and Nightmare tiers as the player climbs.
+- Later opponents gain carefully increasing health, speed and punch power; title defences and title rematches use Nightmare AI.
+- Added a visible challenge label, AI tier and coin reward to the career fight card.
+
+Existing visual/combat enhancements retained:
 - Fighters visibly accumulate eye swelling and body-shot wear during a bout.
 - Sweat highlights become more noticeable as stamina falls.
 - Clean impacts trigger a brief visual shock highlight.
@@ -15,4 +21,4 @@ Deployment:
 3. Commit the changes and allow GitHub Pages to rebuild.
 4. Refresh the site; if the old version remains cached, close the installed app/browser tab and reload.
 
-Validation: the embedded JavaScript passed Node.js syntax checking. This package has not been play-tested in a full browser session, so please test a full bout on desktop and mobile after deployment.
+Validation: embedded JavaScript passed Node.js syntax checking and ZIP integrity was checked. This package has not been play-tested in a full browser session, so please test a full career run on desktop and mobile after deployment.
