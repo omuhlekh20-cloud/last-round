@@ -1299,6 +1299,27 @@
       text-align: center; pointer-events: none; white-space: nowrap;
     }
     #homeScreen.no-photo .bg-missing { display: block; }
+
+    /* 2D art clarity refresh: cleaner panels, stronger hierarchy and readable controls */
+    #hud { text-shadow: 0 2px 4px rgba(0,0,0,.95); }
+    .fighter-hud { filter: drop-shadow(0 2px 4px rgba(0,0,0,.8)); }
+    .hud-name-row { font-size: clamp(13px, 2vw, 17px); letter-spacing: .1em; }
+    .hp-bar-outer { height: clamp(17px, 2.8vh, 23px); border: 2px solid rgba(255,255,255,.78); border-radius: 6px; }
+    .hp-fill { background: linear-gradient(180deg,#ff7770 0%,#ed202d 45%,#a90819 100%); }
+    .meter-outer { height: 8px; border-color: rgba(255,255,255,.48); }
+    .stamina-fill { background: linear-gradient(180deg,#b5ffd4,#18bd75); }
+    .energy-fill { background: linear-gradient(90deg,#37a6ff,#a855f7,#ffd166); }
+    .btn, button, .panel, .menu-panel { text-rendering: geometricPrecision; }
+    .btn { border-width: 2px; font-weight: 900; letter-spacing: .035em; }
+    .btn:focus-visible, button:focus-visible { outline: 3px solid #ffe08a; outline-offset: 3px; }
+    .fighter-card, .character-card, .roster-card { border: 1px solid rgba(255,255,255,.28); }
+    .fighter-card:hover, .character-card:hover, .roster-card:hover { filter: brightness(1.12); }
+    @media (max-width: 700px) {
+      .hud-name-row { font-size: 12px; }
+      .hp-bar-outer { height: 16px; }
+      .meter-outer { height: 7px; }
+    }
+
   </style>
 </head>
 <body>
@@ -2401,6 +2422,9 @@
       countOut: false,   // too hurt to beat the ten-count
       tko: false,
       cut: 0,            // facial damage level (bruising, then blood)
+      swelling: 0,        // accumulates around the eyes after clean head shots
+      bodyDamage: 0,      // cumulative body punishment for fatigue visuals
+      shockFrames: 0,     // brief impact reaction / camera emphasis
       regenMul: !isAI && idx === 0 && save.gear.includes('wraps') ? 1.2 : 1,
       armor: !isAI && idx === 0 && save.gear.includes('guard') ? .92 : 1,
       cutman: !isAI && idx === 0 && save.gear.includes('cutman'),
@@ -2428,7 +2452,7 @@
         weaponTip: { x: x, y: CFG.GROUND_Y - 80 }
       },
       // AI runtime
-      ai: { action: 'approach', timer: 0, reactDelay: 0, pendingHit: false, circleDir: 1 }
+      ai: { action: 'approach', timer: 0, reactDelay: 0, pendingHit: false, circleDir: 1, lastObservedMove: null, repeatedMove: 0 }
     };
   }
 
@@ -2903,6 +2927,10 @@
     def.hp = Math.max(0, def.hp - dmg);
     def.recover = Math.min(def.recover + dmg * def.recMul, def.character.maxHp - def.hp);   // about a third can be shaken off
     def.lastHit = 0;
+    const impactHeavy = move.type === 'heavy' || move.type === 'special' || move.type === 'throw';
+    def.shockFrames = Math.max(def.shockFrames || 0, impactHeavy ? 18 : 10);
+    if (move.type === 'low') def.bodyDamage = Math.min(1, (def.bodyDamage || 0) + dmg / (def.character.maxHp * 1.8));
+    else if (move.type !== 'throw') def.swelling = Math.min(1, (def.swelling || 0) + dmg / (def.character.maxHp * 2.4));
     att.points += dmg;                                                               // clean punches score with the judges
     if (move.type === 'low') {                                                       // body work saps the gas tank
       def.staminaCap = Math.max(45, def.staminaCap - dmg * .7);
@@ -3021,6 +3049,10 @@
     const opponentAttacking = player.state === 'attack';
     const playerRecovering = ['attack','hit','guardBreak','knockdown'].includes(player.state);
     const playerMove = player.moveName && MOVES[player.moveName];
+    if (opponentAttacking && player.moveName && player.moveFrame <= 1) {
+      if (brain.lastObservedMove === player.moveName) brain.repeatedMove = Math.min(5, (brain.repeatedMove || 0) + 1);
+      else { brain.lastObservedMove = player.moveName; brain.repeatedMove = 1; }
+    }
 
     // During a knockdown count, give the boxer space and reset ring position.
     if (player.state === 'knockdown' || player.state === 'getup') {
@@ -3040,8 +3072,9 @@
       else if (brain.reactDelay === 0) {
         brain.reactDelay = -1;
         const canDefend = ai.stamina > 12;
-        if (canDefend && Math.random() < difficulty.blockProb * style.guard) {
-          brain.action = playerMove && playerMove.high && Math.random() < .30 ? 'duck' : 'block';
+        const learnedRead = Math.min(.22, Math.max(0, (brain.repeatedMove || 0) - 1) * .055);
+        if (canDefend && Math.random() < Math.min(.94, difficulty.blockProb * style.guard + learnedRead)) {
+          brain.action = playerMove && playerMove.high && Math.random() < (.30 + learnedRead) ? 'duck' : 'block';
           brain.timer = 7 + Math.floor(Math.random() * 8);
         } else if (style.id === 'counter' && Math.random() < .58) {
           brain.action = 'counter'; brain.timer = 8;
@@ -3918,6 +3951,11 @@
     }
     drawFace(c, f, headX, headY, dir, skin);
     c.lineWidth = .8;
+    if ((f.shockFrames || 0) > 0) {
+      c.save(); c.globalAlpha = Math.min(.32, f.shockFrames / 48);
+      c.strokeStyle = '#fff4d6'; c.lineWidth = 1.3;
+      c.beginPath(); c.arc(headX, headY, 15.5, -.9, .9); c.stroke(); c.restore();
+    }
 
     // ---- Facial damage: swelling under the eye, then a cut that bleeds down the cheek ----
     const hurt = 1 - f.hp / ch.maxHp;
@@ -3933,6 +3971,25 @@
         c.beginPath(); c.moveTo(headX + dir * 10, headY + 3.4); c.lineTo(headX + dir * 8.6, headY + 9.5); c.stroke();
       }
       c.lineWidth = .8;
+    }
+    // Progressive swelling: the eye and cheek visibly darken as clean shots land.
+    if ((f.swelling || 0) > .08) {
+      const bruiseAlpha = Math.min(.48, f.swelling * .48);
+      c.fillStyle = `rgba(66,24,52,${bruiseAlpha})`;
+      c.beginPath(); c.ellipse(headX + dir * 5.5, headY + 3.5, 4 + f.swelling * 2, 2.4 + f.swelling, -.18 * dir, 0, Math.PI * 2); c.fill();
+    }
+    // Fatigue sweat: small highlights move with the boxer instead of a static overlay.
+    const fatigueLevel = Math.max(0, 1 - f.stamina / CFG.MAX_STAMINA);
+    if (fatigueLevel > .28 && !down) {
+      c.save(); c.globalAlpha = Math.min(.7, fatigueLevel * .8);
+      c.fillStyle = '#b9e8f5';
+      for (let si = 0; si < 3; si++) {
+        const phase = f.animTime * (3.2 + si * .35) + si * 2.1 + f.idx;
+        const sx = headX + dir * (13 + Math.sin(phase) * 2.5);
+        const sy = headY + 2 + ((phase * 7) % 9);
+        c.beginPath(); c.ellipse(sx, sy, 1.05, 2.2, -.25 * dir, 0, Math.PI * 2); c.fill();
+      }
+      c.restore();
     }
 
     // ---- Near leg and near arm ----
@@ -4199,8 +4256,53 @@
     c.quadraticCurveTo(0, -45, 14, -36);
     c.quadraticCurveTo(12, -12, 8, 5); c.closePath(); c.fill();
     c.restore();
+    if ((f.bodyDamage || 0) > .08) {
+      c.save(); c.globalAlpha = Math.min(.32, f.bodyDamage * .32);
+      c.fillStyle = '#6b2630'; c.beginPath();
+      c.ellipse(hipX + dir * 8, hipY - 25, 7 + f.bodyDamage * 3, 9 + f.bodyDamage * 2, -.25 * dir, 0, Math.PI * 2); c.fill();
+      c.restore();
+    }
     drawLimb(c, shX, shY, headX, headY, 5.4, 5.2);
     c.beginPath(); c.arc(headX, headY, 12.4, 0, Math.PI * 2); c.fill();
+
+    // Clear character materials: skin, trunks, gloves and footwear sit over the
+    // dark silhouette so each fighter reads cleanly at normal play scale.
+    const skinPalette = {
+      light: ['#f1c9a5', '#d99f79', '#8d5b43'],
+      tan: ['#d99b6c', '#b97850', '#70432f'],
+      brown: ['#a96743', '#81472f', '#4e2b20'],
+      deep: ['#74452f', '#563022', '#321b17']
+    };
+    const skinTone = skinPalette[f.character.skin] || skinPalette.brown;
+    const trunks = (f.character.trunks || ['#555','#aaa','#222']);
+    const glove = f.character.color || '#d62828';
+    // Warm torso fill with a crisp outline and simple pectoral/abdominal shading.
+    c.save();
+    c.translate(hipX, hipY); c.rotate(torsoA + Math.PI / 2);
+    c.beginPath(); c.moveTo(-8, 5);
+    c.quadraticCurveTo(-12, -12, -14, -36);
+    c.quadraticCurveTo(0, -45, 14, -36);
+    c.quadraticCurveTo(12, -12, 8, 5); c.closePath();
+    c.fillStyle = skinTone[0]; c.fill();
+    c.strokeStyle = skinTone[2]; c.lineWidth = 1.8; c.stroke();
+    c.strokeStyle = skinTone[1]; c.lineWidth = 1.5;
+    c.beginPath(); c.moveTo(-10, -25); c.quadraticCurveTo(0, -20, 10, -25);
+    c.moveTo(-7, -13); c.quadraticCurveTo(0, -10, 7, -13);
+    c.moveTo(0, -9); c.lineTo(0, 1); c.stroke();
+    c.restore();
+    // Head and ear highlights make expressions/head direction easier to read.
+    c.fillStyle = skinTone[0]; c.strokeStyle = skinTone[2]; c.lineWidth = 1.6;
+    c.beginPath(); c.arc(headX, headY, 10.8, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillStyle = skinTone[1];
+    c.beginPath(); c.ellipse(headX - dir * 8, headY + 1, 2.4, 3.2, 0, 0, Math.PI * 2); c.fill();
+    // Defined shorts and waistband, color-coded for instant roster recognition.
+    c.fillStyle = trunks[0]; c.strokeStyle = trunks[2]; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(hipX - 13, hipY - 3); c.lineTo(hipX + 13, hipY - 3);
+    c.lineTo(hipX + 16, hipY + 13); c.lineTo(hipX + 5, hipY + 16);
+    c.lineTo(hipX, hipY + 10); c.lineTo(hipX - 5, hipY + 16);
+    c.lineTo(hipX - 16, hipY + 13); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = trunks[1]; c.fillRect(hipX - 13, hipY - 4, 26, 4);
+    c.fillStyle = '#f4f0e8'; c.fillRect(hipX - 2, hipY - 3, 4, 15);
 
     // Character-specific headgear and cloth silhouettes.
     switch (f.character.style) {
@@ -4228,6 +4330,17 @@
         c.lineTo(headX - dir * 7, headY - 21); c.lineTo(headX + dir * 7, headY - 11); c.fill();
     }
 
+
+    // Visible face profile: brow, eye, nose and mouth remain legible at game zoom.
+    c.save();
+    c.fillStyle = '#241611';
+    c.beginPath(); c.ellipse(headX + dir * 4.5, headY - 3.3, 3.2, 1.15, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#fff4dc';
+    c.beginPath(); c.arc(headX + dir * 5, headY - 3.4, 1.05, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = skinTone[2]; c.lineWidth = 1.3;
+    c.beginPath(); c.moveTo(headX + dir * 8, headY + 2);
+    c.lineTo(headX + dir * 11, headY + 4); c.stroke();
+    c.restore();
     // Muted cloth/armor accents preserve the black silhouette.
     c.strokeStyle = characterColor; c.lineWidth = f.character.style === 'horns' ? 4 : 3;
     c.beginPath(); c.moveTo(hipX - 10, hipY - 2); c.lineTo(hipX + 10, hipY - 2); c.stroke();
@@ -4241,6 +4354,34 @@
     drawLimb(c, kneeRX, kneeRY, footRX, footRY, 6.8, 5);
     drawLimb(c, shX, shY, elRX, elRY, 7.6, 5.6);
     drawLimb(c, elRX, elRY, handRX, handRY, 5.6, 4.7);
+
+    // Skin-toned arm and leg panels with subtle contour lines.
+    c.fillStyle = skinTone[0];
+    drawLimb(c, shX, shY, elLX, elLY, 5.1, 3.8);
+    drawLimb(c, elLX, elLY, handLX, handLY, 3.8, 3.2);
+    drawLimb(c, hipX, hipY, kneeLX, kneeLY, 6.7, 4.4);
+    drawLimb(c, kneeLX, kneeLY, footLX, footLY, 4.4, 3.4);
+    drawLimb(c, hipX, hipY, kneeRX, kneeRY, 7.0, 4.7);
+    drawLimb(c, kneeRX, kneeRY, footRX, footRY, 4.7, 3.6);
+    drawLimb(c, shX, shY, elRX, elRY, 5.4, 4.0);
+    drawLimb(c, elRX, elRY, handRX, handRY, 4.0, 3.4);
+    // Gloves are unmistakable rounded boxing mitts with a white cuff and seam.
+    for (const glovePoint of [[handLX, handLY], [handRX, handRY]]) {
+      c.save();
+      c.translate(glovePoint[0], glovePoint[1]);
+      c.fillStyle = glove; c.strokeStyle = '#170d0d'; c.lineWidth = 2.2;
+      c.beginPath(); c.ellipse(0, 0, 8.2, 6.6, -.18 * dir, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = '#f4eee5'; c.fillRect(-5.5, 4.2, 10.5, 3.1);
+      c.strokeStyle = 'rgba(255,255,255,.75)'; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(-3.5, -2); c.quadraticCurveTo(1, -5, 4, -1); c.stroke();
+      c.restore();
+    }
+    // High-contrast boots anchor footwork and make stance changes readable.
+    for (const footPoint of [[footLX, footLY], [footRX, footRY]]) {
+      c.fillStyle = '#17191f'; c.strokeStyle = '#08090c'; c.lineWidth = 1.8;
+      c.beginPath(); c.ellipse(footPoint[0] + dir * 3, footPoint[1] + 1, 9, 4.2, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = trunks[1]; c.fillRect(footPoint[0] - 3, footPoint[1] - 2, 5, 2);
+    }
 
     // Weapons are attached to the hand and have curved blades / metal fittings.
     let tipX = handRX, tipY = handRY;
@@ -4668,6 +4809,8 @@
     // Skeletal Interpolation
     updateFighterPose(Game.p1);
     updateFighterPose(Game.p2);
+    if (Game.p1.shockFrames > 0) Game.p1.shockFrames--;
+    if (Game.p2.shockFrames > 0) Game.p2.shockFrames--;
 
     // Pooled Particles
     for (let i = 0; i < POOL_PARTICLES; i++) {
