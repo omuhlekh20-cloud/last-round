@@ -1468,6 +1468,11 @@
           <span>Quick Fight</span>
           <small>Custom Arena &amp; AI</small>
         </button>
+        <button class="btn" id="btnTournament"><span>Championship Tournament</span><small>8 fighters · 7 bouts · one champion</small></button>
+        <div class="btn-row">
+          <button class="btn" id="btnTraining"><span>Training Gym</span><small>Permanent upgrades</small></button>
+          <button class="btn" id="btnHall"><span>Hall of Fame</span><small>Career legacy</small></button>
+        </div>
         <button class="btn" id="btnLocal2P">
           <span>Local 2-Player</span>
           <small>Same-Screen Versus</small>
@@ -1621,6 +1626,26 @@
     </div>
   </div>
 
+  <!-- CHAMPIONSHIP UPDATE SCREENS -->
+  <div id="trainingScreen" class="screen"><div class="modal-card" style="max-width:620px;max-height:88vh;overflow:auto;">
+    <div class="modal-head"><h2>Training Gym</h2><span class="coins-badge" id="trainingCoins">0 Coins</span></div>
+    <p style="color:var(--muted);font-size:13px;">Permanent career upgrades. Each discipline can be trained up to level 5.</p>
+    <div id="trainingCards" class="grid-cards"></div>
+    <button class="btn" id="btnCloseTraining">BACK TO MENU</button>
+  </div></div>
+  <div id="hallScreen" class="screen"><div class="modal-card" style="max-width:620px;max-height:88vh;overflow:auto;">
+    <div class="modal-head"><h2>Hall of Fame</h2><button class="hud-mini-btn" id="btnCloseHall">BACK</button></div>
+    <div id="hallStats" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;"></div>
+    <h3 style="color:var(--gold);margin:18px 0 8px;">RIVALRY BOARD</h3><div id="rivalryBoard" style="font-size:13px;color:var(--muted);"></div>
+  </div></div>
+  <div id="tournamentScreen" class="screen"><div class="modal-card" style="max-width:620px;max-height:88vh;overflow:auto;">
+    <div class="modal-head"><h2>8-Fighter Championship</h2><button class="hud-mini-btn" id="btnCloseTournament">BACK</button></div>
+    <p style="color:var(--muted);font-size:13px;">Win seven consecutive bouts to become the tournament champion. Progress is saved between fights.</p>
+    <div id="tournamentBracket" style="display:grid;gap:8px;margin:14px 0;"></div>
+    <button class="btn btn-primary" id="btnStartTournament">ENTER TOURNAMENT</button>
+    <button class="btn" id="btnResetTournament">RESET TOURNAMENT</button>
+  </div></div>
+
   <!-- PAUSE OVERLAY -->
   <div id="pauseScreen" class="screen">
     <div class="modal-card" style="max-width:380px;text-align:center;">
@@ -1705,6 +1730,7 @@
     kuro:   { name: 'THE HAMMER', title: 'Undisputed Champion', mark: 'TH', color: '#ef4444', skin: 'deep', hair: 0, beard: 4, signature: 'Black-and-red champion', buildX: 1.10, buildY: .99, trunks: ['#1b1b1f', '#55555e', '#000000'], speed: .9, mass: 1.38, power: 1.2, jump: 1, maxHp: 120 }
   };
   const CHAR_IDS = Object.keys(CHARACTERS);
+  const TOURNAMENT_OPPONENTS = ['akane', 'raiden', 'sensei', 'kage', 'duke', 'toro', 'baba'];
 
   const WEAPONS = {
     // Glove sets (ids kept from the save format). glove: [base, highlight, shadow]
@@ -1930,6 +1956,11 @@
     // Career: per-division progress, belts held, successful defences, and who took a lost belt.
     career: { division: 0, stage: [0, 0, 0], belts: [false, false, false], defences: [0, 0, 0], lostTo: [null, null, null] },
     tournamentStage: 0,
+    tournamentWins: 0,
+    tournamentTitles: 0,
+    knockouts: 0,
+    training: { power: 0, speed: 0, conditioning: 0, defence: 0 },
+    rivalries: {},
     settings: {
       ctrlSize: 1,
       ctrlOpacity: 0.72,
@@ -1952,6 +1983,8 @@
         gear: Array.isArray(parsed.gear) ? parsed.gear : [],
         unlockedAccessories: Array.isArray(parsed.unlockedAccessories) ? parsed.unlockedAccessories : [],
         equippedAccessories: { ...defaultSave.equippedAccessories, ...(parsed.equippedAccessories || {}) },
+        training: { ...defaultSave.training, ...(parsed.training || {}) },
+        rivalries: { ...(parsed.rivalries || {}) },
         settings: { ...defaultSave.settings, ...(parsed.settings || {}) }
       };
     } catch {
@@ -2728,7 +2761,7 @@
     // Footing gradually returns while a boxer is not being pressured. Body damage slows recovery.
     if (f.state !== 'hit' && f.state !== 'knockdown' && f.state !== 'guardBreak') {
       const balanceRegen = f.state === 'block' ? 3.5 : (f.state === 'idle' ? 13 : 7);
-      f.balance = Math.min(100, f.balance + balanceRegen * dt * (1 - (f.bodyDamage || 0) * .28));
+      f.balance = Math.min(100, f.balance + balanceRegen * (f.balanceRegenMul || 1) * dt * (1 - (f.bodyDamage || 0) * .28));
     }
     if (f.duckTimer > 0) f.duckTimer--;
 
@@ -3882,6 +3915,11 @@
     c.beginPath(); c.ellipse(gx + cs, gy + sn, 6.6, 4.8, a, -2.4, -.3); c.stroke();
     c.strokeStyle = pal[2];
     c.beginPath(); c.ellipse(gx, gy, 9.6, 7.8, a, .3, 2.6); c.stroke();
+    // Narrow leather specular strip makes the padded glove read more clearly.
+    c.save(); c.globalAlpha = .34; c.strokeStyle = '#ffffff'; c.lineWidth = 1.1; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(gx - (cs < 0 ? -1 : 1) * 2, gy - 4);
+    c.quadraticCurveTo(gx + (cs < 0 ? -1 : 1) * 2, gy - 7, gx + (cs < 0 ? -1 : 1) * 6, gy - 4); c.stroke();
+    c.restore();
   }
 
   function drawLeg(c, hx, hy, kx, ky, fx, fy, dir, skin, trunks, seed, down) {
@@ -3901,6 +3939,66 @@
     const j = f.joints[key], S = CFG.FIGHTER_SCALE;
     j.x = f.x + (x - f.x) * S; j.y = f.y + (y - f.y) * S;
   }
+
+  // Pixel-art animation renderer. The original articulated renderer remains as a
+  // safe fallback while the local sprite atlas loads, and the game simulation is untouched.
+  const pixelFighterAtlas = new Image();
+  pixelFighterAtlas.src = 'fighter-pixel-sprites.png';
+  let pixelAtlasReady = false;
+  pixelFighterAtlas.onload = () => { pixelAtlasReady = true; };
+  const PIXEL_ANIM = {
+    idle: [0, 1], move: [0, 1], dash: [1, 2],
+    jab: [0, 2, 1], punch: [0, 2, 1], punch2: [0, 4, 1], hook: [0, 4, 1],
+    upper: [7, 5, 1], heavy: [0, 4, 8], heavyFinisher: [0, 4, 8], bossShock: [0, 5, 8], lunge: [0, 5, 8], special: [0, 5, 8],
+    block: [6], crouch: [7], hit: [8, 9], guardBreak: [8, 9],
+    knockdown: [10], death: [10], getup: [11, 0], victory: [1, 0]
+  };
+  function drawPixelBoxer(c, f) {
+    if (!pixelAtlasReady || !pixelFighterAtlas.naturalWidth) { drawBoxer(c, f); return; }
+    const p = f.pose || {}, state = f.state || 'idle';
+    let frames = PIXEL_ANIM[state] || PIXEL_ANIM.idle;
+    if (state === 'attack') {
+      const name = f.moveName || 'jab';
+      frames = PIXEL_ANIM[name] || (name === 'punch2' ? PIXEL_ANIM.punch2 : PIXEL_ANIM.jab);
+      const move = MOVES[name];
+      const frame = f.moveFrame || 0;
+      const startup = move ? move.startup : 5;
+      const active = move ? move.active : 4;
+      const recovery = move ? move.recovery : 8;
+      const total = Math.max(1, startup + active + recovery);
+      const phase = frame < startup ? 0 : frame < startup + active ? 1 : 2;
+      const idx = Math.min(frames.length - 1, phase);
+      frames = [frames[idx]];
+    }
+    let frameIndex;
+    if (frames.length === 1) frameIndex = frames[0];
+    else frameIndex = frames[Math.floor((f.animTime || 0) * (state === 'move' || state === 'idle' ? 5 : 8)) % frames.length];
+    if ((state === 'hit' || state === 'guardBreak') && (f.impactFrames || 0) > 0) frameIndex = (f.impactFrames > 13 ? 8 : 9);
+    const cols = 4, rows = 3;
+    const sw = pixelFighterAtlas.naturalWidth / cols, sh = pixelFighterAtlas.naturalHeight / rows;
+    const sx = (frameIndex % cols) * sw, sy = Math.floor(frameIndex / cols) * sh;
+    const down = frameIndex === 10 || state === 'knockdown' || state === 'death';
+    const w = down ? 176 : 132, h = down ? 108 : 174;
+    c.save();
+    // Grounding shadow and a tiny hit flash keep the sprite integrated with the arena.
+    c.fillStyle = 'rgba(0,0,0,.42)';
+    c.beginPath(); c.ellipse(f.x, CFG.GROUND_Y + 4, down ? 72 : 43, 7, 0, 0, Math.PI * 2); c.fill();
+    if ((f.impactFrames || 0) > 0) c.globalAlpha = .88 + Math.sin(f.animTime * 35) * .12;
+    c.translate(f.x, f.y);
+    if (f.facing < 0) c.scale(-1, 1);
+    c.imageSmoothingEnabled = false;
+    c.drawImage(pixelFighterAtlas, sx, sy, sw, sh, -w / 2, -h, w, h);
+    c.imageSmoothingEnabled = true;
+    // Keep equipped cosmetics visible on the new sprite artwork.
+    const a = f.accessories || {};
+    const head = ACCESSORIES[a.head], neck = ACCESSORIES[a.neck], face = ACCESSORIES[a.face], wrists = ACCESSORIES[a.wrists];
+    if (!down && head) { c.strokeStyle = head.color; c.lineWidth = 4; c.beginPath(); c.arc(0, -h + 31, 15, Math.PI * 1.08, Math.PI * 1.92); c.stroke(); }
+    if (!down && neck) { c.strokeStyle = neck.color; c.lineWidth = 2.5; c.beginPath(); c.arc(0, -h + 70, 11, .25, Math.PI - .25); c.stroke(); }
+    if (!down && face) { c.strokeStyle = face.color; c.lineWidth = 3; c.beginPath(); c.moveTo(8, -h + 33); c.lineTo(19, -h + 37); c.stroke(); }
+    if (!down && wrists) { c.strokeStyle = wrists.color; c.lineWidth = 4; c.beginPath(); c.moveTo(24, -h + 72); c.lineTo(34, -h + 76); c.stroke(); }
+    c.restore();
+  }
+
 
   function drawBoxer(c, f) {
     const ch = f.character, p = f.pose, dir = f.facing, deg = Math.PI / 180, S = CFG.FIGHTER_SCALE;
@@ -4016,6 +4114,16 @@
     c.moveTo(dir * 10, -27); c.quadraticCurveTo(dir * 7, -24, dir * 3, -27);                  // chest highlight
     c.moveTo(dir * 7, -14); c.lineTo(dir * 7, -3);                                            // abs highlight
     c.stroke();
+    // Subtle skin sheen gives the chest and shoulders more volume at arena scale.
+    c.save();
+    const chestGlow = c.createLinearGradient(-12, -38, 13, -5);
+    chestGlow.addColorStop(0, 'rgba(255,255,255,.20)');
+    chestGlow.addColorStop(.42, 'rgba(255,255,255,.035)');
+    chestGlow.addColorStop(1, 'rgba(0,0,0,.12)');
+    c.fillStyle = chestGlow;
+    c.beginPath(); c.moveTo(-9, 4); c.quadraticCurveTo(-12, -14, -15, -35);
+    c.quadraticCurveTo(0, -46, 15, -35); c.quadraticCurveTo(12, -14, 9, 4); c.closePath(); c.fill();
+    c.restore();
     c.lineWidth = .8;
     c.fillStyle = trunks[0];
     c.beginPath(); c.moveTo(-11.5, -9); c.lineTo(11.5, -9); c.lineTo(12.5, 8); c.lineTo(-12.5, 8); c.closePath(); c.fill();
@@ -4064,6 +4172,16 @@
       c.fill();
     }
     drawFace(c, f, headX, headY, dir, skin);
+    // Crisp facial definition: brow ridge, eye catchlight and a restrained mouth line.
+    c.save(); c.lineCap = 'round'; c.strokeStyle = skin[2]; c.lineWidth = 1.25;
+    c.beginPath(); c.moveTo(headX + dir * 3.5, headY - 2.8);
+    c.quadraticCurveTo(headX + dir * 6.2, headY - 4.1, headX + dir * 8.5, headY - 2.4); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.72)';
+    c.beginPath(); c.arc(headX + dir * 6.5, headY - 1.1, .75, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = 'rgba(45,20,18,.55)'; c.lineWidth = .85;
+    c.beginPath(); c.moveTo(headX + dir * 5.5, headY + 7.4);
+    c.quadraticCurveTo(headX + dir * 8.2, headY + 8.4, headX + dir * 10, headY + 7.1); c.stroke();
+    c.restore();
     c.lineWidth = .8;
     if ((f.shockFrames || 0) > 0) {
       c.save(); c.globalAlpha = Math.min(.32, f.shockFrames / 48);
@@ -4702,7 +4820,7 @@
      ========================================================================== */
   const Game = {
     state: 'home',       // home | fight | paused | result
-    mode: 'quick',       // story | quick | 2p
+    mode: 'quick',       // story | quick | 2p | tournament
     arena: 'sunset',
     difficulty: 'normal',
     opponentCharacter: 'raiden',
@@ -4775,6 +4893,38 @@
     document.getElementById('homeWeaponBadge').textContent = `${(CHARACTERS[save.selectedCharacter] || CHARACTERS.shadow).name} / ${WEAPONS[save.equippedWeapon].name}`;
   }
 
+  function renderTournament() {
+    const stage = Math.max(0, Math.min(7, save.tournamentStage || 0));
+    const labels = ['Quarter-final 1','Quarter-final 2','Quarter-final 3','Quarter-final 4','Semi-final 1','Semi-final 2','GRAND FINAL'];
+    const wrap = document.getElementById('tournamentBracket');
+    wrap.innerHTML = labels.map((label,i) => `<div style="padding:10px;border:1px solid ${i < stage ? 'var(--gold)' : 'var(--border)'};background:${i < stage ? 'rgba(212,175,55,.12)' : 'rgba(255,255,255,.03)'};display:flex;justify-content:space-between;gap:10px;"><b>${label}</b><span>${i < stage ? '✓ WON' : i === stage ? 'UP NEXT' : 'LOCKED'}</span></div>`).join('') + `<div style="padding:12px;text-align:center;border:2px solid var(--gold);color:var(--gold);font-weight:900;">${stage >= 7 ? 'CHAMPION CROWNED · ' + save.tournamentTitles + ' TITLES' : 'CHAMPIONSHIP PROGRESS · ' + stage + '/7 WINS'}</div>`;
+    document.getElementById('btnStartTournament').textContent = stage >= 7 ? 'START A NEW TOURNAMENT' : stage ? 'CONTINUE TOURNAMENT' : 'ENTER TOURNAMENT';
+  }
+
+  const TRAINING_DISCIPLINES = [
+    { id:'power', name:'Punching Power', desc:'Increase punch impact and damage.', cost:140 },
+    { id:'speed', name:'Hand Speed', desc:'Improve movement and punch speed.', cost:140 },
+    { id:'conditioning', name:'Roadwork', desc:'Increase stamina capacity and recovery.', cost:160 },
+    { id:'defence', name:'Defensive Drills', desc:'Improve balance recovery after blocks.', cost:160 }
+  ];
+  function renderTraining() {
+    document.getElementById('trainingCoins').textContent = `${save.coins} Coins`;
+    const host = document.getElementById('trainingCards'); host.innerHTML = '';
+    TRAINING_DISCIPLINES.forEach(d => {
+      const level = save.training[d.id] || 0, cost = d.cost * (level + 1);
+      const card = document.createElement('div'); card.className = 'select-card';
+      card.innerHTML = `<h4>${d.name}</h4><p>${d.desc}</p><p style="color:var(--gold);font-weight:900;">LEVEL ${level}/5</p><button class="btn" ${level>=5?'disabled':''}>${level>=5?'MAX LEVEL':`TRAIN · ${cost} COINS`}</button>`;
+      card.querySelector('button').onclick = () => { if(level>=5) return; if(save.coins<cost){showToast(`Need ${cost-save.coins} more coins`);return;} save.coins-=cost; save.training[d.id]=level+1; persistSave(); renderTraining(); refreshHomeStats(); showToast(`${d.name} upgraded to level ${level+1}`); };
+      host.appendChild(card);
+    });
+  }
+  function renderHallOfFame() {
+    const stats = [ ['CAREER WINS',save.wins||0], ['KNOCKOUTS',save.knockouts||0], ['TOURNAMENT TITLES',save.tournamentTitles||0], ['TOURNAMENT BOUTS WON',save.tournamentWins||0], ['CHAMPIONSHIP BELTS',(save.career.belts||[]).filter(Boolean).length], ['TITLE DEFENCES',(save.career.defences||[]).reduce((a,b)=>a+(b||0),0)] ];
+    document.getElementById('hallStats').innerHTML = stats.map(([k,v])=>`<div style="padding:14px;border:1px solid var(--border);background:rgba(255,255,255,.04);"><small style="color:var(--muted);">${k}</small><div style="font-size:26px;font-weight:900;color:var(--gold);">${v}</div></div>`).join('');
+    const rivals = Object.entries(save.rivalries||{}).sort((a,b)=>(b[1].fights||0)-(a[1].fights||0)).slice(0,8);
+    document.getElementById('rivalryBoard').innerHTML = rivals.length ? rivals.map(([name,r])=>`<div style="padding:8px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;"><b>${name}</b><span>${r.wins||0}W - ${r.losses||0}L · ${r.fights||0} fights</span></div>`).join('') : 'No rivalries yet. Fight opponents repeatedly to build your rivalry record.';
+  }
+
   function startMatch() {
     clearInputs();
     Game.state = 'fight';
@@ -4818,6 +4968,18 @@
       Game.p1.belt = !!stage.defence;
       Game.p2.belt = !!stage.titleFight && !stage.defence;
       CFG.ROUNDS_TO_WIN = stage.titleFight ? 3 : 2;
+    } else if (Game.mode === 'tournament') {
+      const stageIndex = Math.min(6, save.tournamentStage || 0);
+      const opponentId = TOURNAMENT_OPPONENTS[stageIndex];
+      const opponent = CHARACTERS[opponentId];
+      Game.opponentCharacter = opponentId;
+      Game.difficulty = stageIndex < 2 ? 'normal' : stageIndex < 4 ? 'hard' : 'nightmare';
+      Game.arena = ['sunset','dojo','neon','temple','sunset','dojo','neon'][stageIndex];
+      Game.p1 = createFighter(0, hero.name, 330, 1, save.equippedWeapon, save.equippedAura, false, false, heroId);
+      Game.p2 = createFighter(1, opponent.name, 790, -1, 'unarmed', 'crimson', true, stageIndex === 6, opponentId);
+      const tier = stageIndex;
+      Game.p2.speedMul *= 1 + tier * .035; Game.p2.powerMul *= 1 + tier * .055;
+      if (stageIndex >= 4) Game.p2.character = { ...Game.p2.character, maxHp: Math.round(Game.p2.character.maxHp * (1 + (stageIndex-3)*.06)) }, Game.p2.hp = Game.p2.trailHp = Game.p2.character.maxHp;
     } else if (Game.mode === '2p') {
       const second = CHARACTERS[Game.secondCharacter] || CHARACTERS.akane;
       Game.p1 = createFighter(0, hero.name, 330, 1, save.equippedWeapon, save.equippedAura, false, false, heroId);
@@ -4829,6 +4991,17 @@
       Game.p2 = createFighter(1, opponent.name, 790, -1, signature[Game.opponentCharacter] || 'sword', 'crimson', true, Game.opponentCharacter === 'kuro', Game.opponentCharacter);
     }
 
+    // Permanent gym disciplines apply to the player's fighter in every solo mode.
+    if (Game.mode !== '2p') {
+      const tr = save.training || {};
+      Game.p1.powerMul *= 1 + (tr.power || 0) * .035;
+      Game.p1.speedMul *= 1 + (tr.speed || 0) * .025;
+      Game.p1.staminaCap = Math.min(120, Game.p1.staminaCap + (tr.conditioning || 0) * 3);
+      Game.p1.stamina = Math.min(Game.p1.staminaCap, Game.p1.stamina + (tr.conditioning || 0) * 3);
+      Game.p1.balance = Math.min(100, (Game.p1.balance || 100) + (tr.defence || 0) * 2);
+      Game.p1.balanceRegenMul = 1 + (tr.defence || 0) * .08;
+      Game.p1.regenMul *= 1 + (tr.conditioning || 0) * .06;
+    }
     document.getElementById('p1Name').textContent = Game.p1.name;
     document.getElementById('p2Name').textContent = Game.p2.name;
 
@@ -4910,6 +5083,31 @@
     if (Game.mode === 'story') {
       reward = finishCareerBout(p1Won);
       document.getElementById('btnResultRematch').style.display = 'none';
+    } else if (Game.mode === 'tournament') {
+      document.getElementById('resModeTag').textContent = 'CHAMPIONSHIP TOURNAMENT';
+      document.getElementById('btnResultRematch').style.display = 'none';
+      if (p1Won) {
+        save.tournamentWins = (save.tournamentWins || 0) + 1;
+        save.wins = (save.wins || 0) + 1;
+        save.tournamentStage = Math.min(7, (save.tournamentStage || 0) + 1);
+        reward = 90 + save.tournamentStage * 25;
+        if (save.tournamentStage >= 7) {
+          save.tournamentTitles = (save.tournamentTitles || 0) + 1;
+          document.getElementById('resTitle').textContent = 'TOURNAMENT CHAMPION!';
+          document.getElementById('resDesc').textContent = `You defeated the seven-fighter field and claimed the LAST ROUND Championship Trophy!`;
+          document.getElementById('btnNextOrRematch').textContent = 'NEW TOURNAMENT';
+          showBelt('#e6bd4a');
+          save.tournamentStage = 7;
+        } else {
+          document.getElementById('resTitle').textContent = 'ADVANCED!';
+          document.getElementById('resDesc').textContent = `${Game.p2.name} defeated. ${7-save.tournamentStage} bouts remain before the trophy.`;
+          document.getElementById('btnNextOrRematch').textContent = 'NEXT TOURNAMENT BOUT';
+        }
+      } else {
+        document.getElementById('resTitle').textContent = 'ELIMINATED';
+        document.getElementById('resDesc').textContent = `${Game.p2.name} ended your tournament run. Your progress is saved; reset the bracket to try again.`;
+        document.getElementById('btnNextOrRematch').textContent = 'TRY AGAIN';
+      }
     } else if (Game.mode === '2p') {
       reward = 30;
       document.getElementById('resTitle').textContent = p1Won ? 'PLAYER 1 WINS!' : 'PLAYER 2 WINS!';
@@ -4930,6 +5128,14 @@
       document.getElementById('btnResultRematch').style.display = 'none';
     }
 
+    if (Game.mode !== '2p') {
+      const rivalName = Game.p2.name;
+      const record = save.rivalries[rivalName] || { wins:0, losses:0, fights:0 };
+      record.fights++;
+      if (p1Won) record.wins++; else record.losses++;
+      save.rivalries[rivalName] = record;
+      if (Game.koWin && p1Won) save.knockouts = (save.knockouts || 0) + 1;
+    }
     save.coins += reward;
     persistSave();
     refreshHomeStats();
@@ -5143,6 +5349,25 @@
       ctx.drawImage(bgFarCache, -80 - camDelta * 0.03, 0);
       ctx.drawImage(bgMidCache, -80 - camDelta * 0.09, 0);
       ctx.drawImage(bgFloorCache, -80 - camDelta * 0.14, CFG.GROUND_Y);
+
+      // Broadcast-grade arena lighting: soft moving pools of light and a fine
+      // canvas sheen. Kept in the world layer so it scales cleanly on tablets.
+      const lightT = Game.p1.animTime || 0;
+      ctx.save(); ctx.globalCompositeOperation = 'screen';
+      for (let li = 0; li < 3; li++) {
+        const lx = CFG.WORLD_W * (.2 + li * .3) + Math.sin(lightT * .22 + li * 2.1) * 34;
+        const beam = ctx.createRadialGradient(lx, CFG.GROUND_Y - 22, 12, lx, CFG.GROUND_Y - 22, 245);
+        beam.addColorStop(0, `rgba(255,245,220,${.075 + .018 * Math.sin(lightT + li)})`);
+        beam.addColorStop(.55, 'rgba(255,235,205,.025)'); beam.addColorStop(1, 'rgba(255,235,205,0)');
+        ctx.fillStyle = beam; ctx.fillRect(lx - 245, CFG.GROUND_Y - 267, 490, 490);
+      }
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = .055; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = .7;
+      for (let gi = 0; gi < 34; gi++) {
+        const gx = (gi * 97 + 31) % CFG.WORLD_W, gy = CFG.GROUND_Y + 8 + ((gi * 29) % 82);
+        ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(gx + 18 + (gi % 5) * 7, gy + .5); ctx.stroke();
+      }
+      ctx.restore();
     }
 
     // Drifting embers / cherry petals (pre-allocated, simulation-driven).
@@ -5171,8 +5396,9 @@
     ctx.globalAlpha = 1;
 
     const p1Down = Game.p1.state === 'knockdown' || Game.p1.state === 'death';
-    drawBoxer(ctx, p1Down ? Game.p2 : Game.p1);
-    drawBoxer(ctx, p1Down ? Game.p1 : Game.p2);
+
+    drawPixelBoxer(ctx, p1Down ? Game.p2 : Game.p1);
+    drawPixelBoxer(ctx, p1Down ? Game.p1 : Game.p2);
 
     // Near-side ropes, corner posts and press row in front of the action.
     ctx.drawImage(bgFrontCache, -80 - camDelta * 0.16, 0);
@@ -5731,7 +5957,7 @@
   function openSetup(mode) {
     Game.mode = mode;
     document.getElementById('setupTitle').textContent =
-      mode === 'story' ? 'Career' : mode === '2p' ? 'Local 2-Player' : 'Quick Fight';
+      mode === 'story' ? 'Career' : mode === '2p' ? 'Local 2-Player' : mode === 'tournament' ? 'Championship Tournament' : 'Quick Fight';
 
     const ladderWrap = document.getElementById('ladderWrap');
     const quickWrap = document.getElementById('quickOptionsWrap');
@@ -5781,6 +6007,9 @@
   // Button Event Listeners
   document.getElementById('btnStoryMode').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); openSetup('story'); };
   document.getElementById('btnQuickFight').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); openSetup('quick'); };
+  document.getElementById('btnTournament').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); renderTournament(); showScreen('tournamentScreen'); };
+  document.getElementById('btnTraining').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); renderTraining(); showScreen('trainingScreen'); };
+  document.getElementById('btnHall').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); renderHallOfFame(); showScreen('hallScreen'); };
   document.getElementById('btnLocal2P').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); openSetup('2p'); };
   document.getElementById('btnArmory').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); renderArmory(); showScreen('armoryScreen'); };
   document.getElementById('btnMoves').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); showScreen('movesScreen'); };
@@ -5794,6 +6023,11 @@
   };
 
   document.getElementById('btnCloseSetup').onclick = () => { AudioSys.playUI(); showScreen('homeScreen'); };
+  document.getElementById('btnCloseTraining').onclick = () => { AudioSys.playUI(); showScreen('homeScreen'); };
+  document.getElementById('btnCloseHall').onclick = () => { AudioSys.playUI(); showScreen('homeScreen'); };
+  document.getElementById('btnCloseTournament').onclick = () => { AudioSys.playUI(); showScreen('homeScreen'); };
+  document.getElementById('btnStartTournament').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); if ((save.tournamentStage||0)>=7) save.tournamentStage=0; Game.mode='tournament'; Game.state='setup'; openSetup('tournament'); startMatch(); };
+  document.getElementById('btnResetTournament').onclick = () => { save.tournamentStage=0; persistSave(); renderTournament(); showToast('Tournament bracket reset'); };
   document.getElementById('btnCloseArmory').onclick = () => { AudioSys.playUI(); showScreen('homeScreen'); };
   document.getElementById('btnCloseMoves').onclick = () => {
     AudioSys.playUI();
@@ -5838,7 +6072,11 @@
   document.getElementById('btnQuitHome').onclick = () => { AudioSys.playUI(); returnHome(); };
 
   // Results Screen Buttons
-  document.getElementById('btnNextOrRematch').onclick = () => { AudioSys.playUI(); startMatch(); };
+  document.getElementById('btnNextOrRematch').onclick = () => {
+    AudioSys.playUI();
+    if (Game.mode === 'tournament' && (save.tournamentStage||0) >= 7) { save.tournamentStage = 0; persistSave(); }
+    startMatch();
+  };
   document.getElementById('btnResultRematch').onclick = () => { AudioSys.playUI(); startMatch(); };
   document.getElementById('btnResultHome').onclick = () => { AudioSys.playUI(); returnHome(); };
 

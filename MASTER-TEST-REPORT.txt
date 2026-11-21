@@ -24,3 +24,10 @@ Limitations
 - This was a browser smoke test, not a full multi-round playtest.
 - Full career progression, every AI difficulty, all 22 accessory combinations, mobile touch controls and offline installation were not exhaustively tested.
 - The live GitHub Pages site has not been updated by this package creation.
+
+GRAPHICS OVERHAUL (2026-11-21)
+- Added animated arena light pools and canvas sheen.
+- Added torso form highlights, refined facial micro-details and glove specular highlight.
+- Inline JavaScript syntax check: PASS.
+- Duplicate HTML ID check: PASS (0 duplicates).
+- Interactive browser playthrough: NOT RUN in this environment.

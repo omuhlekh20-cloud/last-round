@@ -1,0 +1,5 @@
+LAST ROUND — MANQ PIXEL ANIMATION OVERHAUL
+
+The live arena fighter render calls now use a 12-pose pixel-art atlas for idle, footwork, punches, guard, crouch, hit recoil, knockdown and recovery. The existing game simulation, career, tournament, shop, controls and save structure are retained. The old renderer remains as a fallback until the atlas finishes loading.
+
+Upload the contents of this ZIP to the root of the existing GitHub Pages repository. Keep fighter-pixel-sprites.png beside index.html.
