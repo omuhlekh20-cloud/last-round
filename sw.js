@@ -1,5 +1,5 @@
 /* Last Round — offline app cache. Bump CACHE when publishing an update. */
-const CACHE = 'last-round-v15-pixel-animation';
+const CACHE = 'last-round-v16-career-edition';
 const CORE = [
   './', './index.html', './fighter-pixel-sprites.png', './manifest.webmanifest',
   './icon.svg', './icon-192.png', './icon-512.png',

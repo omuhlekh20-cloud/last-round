@@ -1320,6 +1320,55 @@
       .meter-outer { height: 7px; }
     }
 
+    /* Career edition */
+    :root { --accent:#ff575e; --gold:#ffd36c; --panel:rgba(12,16,34,.97); --border:rgba(146,181,255,.26); --muted:#b7c2dc; }
+    #homeScreen.light #homeBg { background-size:cover; mix-blend-mode:normal; filter:brightness(.35) saturate(1.3); }
+    #homeScreen.light .home-shade { display:block; background:linear-gradient(110deg,rgba(8,14,33,.93),rgba(34,17,60,.72),rgba(7,17,34,.93)); }
+    #homeScreen.light .credit { color:#fff; }
+    #homeScreen.light .title-main, #homeScreen.light .eyebrow, #homeScreen.light .subtitle { color:#fff; }
+    #homeScreen.light .title-main span { color:#ff675d; -webkit-text-stroke:0; }
+    #homeScreen.light .profile-pill { background:rgba(11,20,44,.8); border-color:#617ab7; color:#fff; }
+    #homeScreen.light .coins-badge { color:#ffd36c; }
+    #homeScreen.light .menu-panel { background:rgba(13,20,43,.83); border:1px solid #4b5d91; border-radius:18px; }
+    #homeScreen.light .btn { color:#fff; border-color:rgba(136,169,241,.3); background:linear-gradient(115deg,#202e55,#30264d); border-radius:12px; }
+    #homeScreen.light .btn small { color:#b9c9e8; }
+    #homeScreen.light .btn-primary { background:linear-gradient(110deg,#ff535e,#d83f9a); border-color:#ff9099; }
+    #homeScreen.light .btn:hover, #homeScreen.light .btn:focus-visible { background:#465795; color:#fff; }
+    #homeScreen.light .home-foot { color:#d6e1ff; }
+    .modal-card { background:linear-gradient(150deg,#101a35,#22152d); border-color:#546898; }
+    .career-progress { display:grid; gap:7px; padding:14px; margin-bottom:12px; border:1px solid #7a70c6; border-radius:12px; background:linear-gradient(120deg,#253c65,#452342); font-size:12px; }
+    .career-progress b { color:#ffd36c; font-size:16px; }
+    .shop-preview { display:flex; align-items:center; gap:16px; margin-bottom:16px; padding:10px; border-radius:14px; background:linear-gradient(120deg,#293f68,#412b56); }
+    .shop-preview canvas { width:180px; height:150px; max-width:42%; background:radial-gradient(circle,#5c6a93,#171b30); border-radius:10px; }
+    .shop-preview p { color:#d1d9eb; font-size:13px; line-height:1.5; }
+    #shopShoes .select-card { color:var(--text); text-align:left; }
+    #shopShoes .select-card h4 { color:#fff; }
+    .action-cluster { width:264px; height:180px; }
+    .atk-btn { width:62px; height:62px; font-size:10px; background:rgba(18,25,48,.88); color:#fff; border:2px solid #8bb6ff; }
+    .atk-btn::after { display:none; }
+    .btn-punch { left:0; top:0; } .btn-upper { left:67px; top:0; border-color:#ffa463; }
+    .btn-knee { left:134px; top:0; border-color:#ff6b80; } .btn-spec { left:201px; top:0; opacity:1; border-color:#e8b5ff; }
+    .btn-block { left:34px; top:70px; color:#fff; background:rgba(33,86,124,.9); }
+    .btn-duck { left:101px; top:70px; border-color:#71dcae; } .btn-dash { left:168px; top:70px; border-color:#ffe487; }
+    .btn-spec.ready { background:#9a47bc; box-shadow:0 0 20px #f9c8ff; }
+    #rotateHint { display:none; position:absolute; left:50%; bottom:10px; transform:translateX(-50%); z-index:30; color:white; background:#202951; padding:8px 14px; border-radius:8px; font-size:12px; pointer-events:none; }
+    @media (orientation:portrait) {
+      #app.playing #rotateHint { display:block; bottom:4px; }
+      .ctrl-zone { bottom:42px; }
+      .ctrl-left { transform:scale(calc(var(--ctrl-scale) * .68)); }
+      .ctrl-right { transform:scale(calc(var(--ctrl-scale) * .70)); }
+      #touchControls.swapped .ctrl-left { transform-origin:bottom right; }
+      #touchControls.swapped .ctrl-right { transform-origin:bottom left; }
+      .p2p-side { transform:scale(.55); bottom:42px; }
+      .p2p-left { transform-origin:bottom left; } .p2p-right { transform-origin:bottom right; }
+    }
+    #champScene .modal-card { text-align:center; overflow-y:auto; gap:8px; }
+    #champBelt { height:48px; width:auto; }
+    #champCanvas { max-height:30vh; object-fit:contain; }
+    #champScene.active .champ-light { animation:champReveal 1.2s ease-out both; }
+    .champ-light { font-size:54px; filter:drop-shadow(0 0 18px #ffd36c); }
+    @keyframes champReveal { from { opacity:0; transform:scale(.55) rotate(-15deg); } to { opacity:1; transform:scale(1) rotate(0); } }
+    @media (max-height:480px) { .action-cluster { transform:scale(.78); transform-origin:bottom right; } .shop-preview canvas { width:110px; height:110px; } }
   </style>
 </head>
 <body>
@@ -1392,11 +1441,13 @@
 
     <div class="ctrl-zone ctrl-right">
       <div class="action-cluster">
-        <button class="atk-btn btn-punch" data-act="punch" aria-label="Jab"></button>
-        <button class="atk-btn btn-kick" data-act="kick" aria-label="Hook"></button>
-        <button class="atk-btn btn-heavy" data-act="heavy" aria-label="Power punch"></button>
-        <button class="atk-btn btn-block" data-act="block" aria-label="Guard"></button>
-        <button class="atk-btn btn-dash" data-act="dash" aria-label="Slip"></button>
+        <button class="atk-btn btn-punch" data-act="punch" aria-label="Jab">JAB</button>
+        <button class="atk-btn btn-upper" data-act="upper" aria-label="Uppercut">UPPER</button>
+        <button class="atk-btn btn-knee" data-act="knee" aria-label="Knee strike">KNEE</button>
+        <button class="atk-btn btn-spec" data-act="special" aria-label="Skill move">SKILL</button>
+        <button class="atk-btn btn-block" data-act="block" aria-label="Face block">BLOCK</button>
+        <button class="atk-btn btn-duck" data-act="duck" aria-label="Duck">DUCK</button>
+        <button class="atk-btn btn-dash" data-act="dash" aria-label="Slip">SLIP</button>
       </div>
     </div>
   </div>
@@ -1411,10 +1462,12 @@
         <button class="mini-btn" data-p="0" data-act="down">&#9660;</button>
       </div>
       <div class="p2p-acts">
-        <button class="mini-btn" data-p="0" data-act="punch">P</button>
-        <button class="mini-btn" data-p="0" data-act="kick">K</button>
-        <button class="mini-btn" data-p="0" data-act="heavy">H</button>
-        <button class="mini-btn" data-p="0" data-act="block">BLK</button>
+        <button class="mini-btn" data-p="0" data-act="punch" aria-label="Jab">JAB</button>
+        <button class="mini-btn" data-p="0" data-act="upper" aria-label="Uppercut">UP</button>
+        <button class="mini-btn" data-p="0" data-act="knee" aria-label="Knee strike">KNEE</button>
+        <button class="mini-btn" data-p="0" data-act="block" aria-label="Face block">BLK</button>
+        <button class="mini-btn" data-p="0" data-act="duck" aria-label="Duck">DUCK</button>
+        <button class="mini-btn" data-p="0" data-act="special" aria-label="Skill move">SKILL</button>
       </div>
     </div>
     <div class="p2p-side p2p-right">
@@ -1425,13 +1478,17 @@
         <button class="mini-btn" data-p="1" data-act="down">&#9660;</button>
       </div>
       <div class="p2p-acts">
-        <button class="mini-btn" data-p="1" data-act="punch">P</button>
-        <button class="mini-btn" data-p="1" data-act="kick">K</button>
-        <button class="mini-btn" data-p="1" data-act="heavy">H</button>
-        <button class="mini-btn" data-p="1" data-act="block">BLK</button>
+        <button class="mini-btn" data-p="1" data-act="punch" aria-label="Jab">JAB</button>
+        <button class="mini-btn" data-p="1" data-act="upper" aria-label="Uppercut">UP</button>
+        <button class="mini-btn" data-p="1" data-act="knee" aria-label="Knee strike">KNEE</button>
+        <button class="mini-btn" data-p="1" data-act="block" aria-label="Face block">BLK</button>
+        <button class="mini-btn" data-p="1" data-act="duck" aria-label="Duck">DUCK</button>
+        <button class="mini-btn" data-p="1" data-act="special" aria-label="Skill move">SKILL</button>
       </div>
     </div>
   </div>
+
+  <div id="rotateHint">Rotate your device for a wider view</div>
 
   <!-- ROUND / KO BANNER -->
   <div id="bannerOverlay">
@@ -1445,7 +1502,7 @@
     <div class="home-shade"></div>
     <div class="home-grain"></div>
     <div class="bg-missing">Background picture not found: save it as home-bg.jpg next to index.html</div>
-    <div class="home-foot"><span class="press-start">Press Start</span><span>1 Credit &middot; Three Rounds</span></div>
+    <div class="home-foot"><span class="press-start">Press Start</span><span>1 Credit &middot; Two-minute bouts</span></div>
     <div class="home-layout">
       <div class="brand-card">
         <div class="eyebrow">CHAMPIONSHIP BOXING</div>
@@ -1461,7 +1518,7 @@
 
       <div class="menu-panel">
         <button class="btn btn-primary" id="btnStoryMode">
-          <span>Title Run</span>
+          <span>Career Lobby</span>
           <small>3 Divisions &middot; Win &amp; Defend Belts</small>
         </button>
         <button class="btn" id="btnQuickFight">
@@ -1478,13 +1535,14 @@
           <small>Same-Screen Versus</small>
         </button>
         <div class="btn-row">
-          <button class="btn" id="btnArmory"><span>Gym Shop</span><small>Gloves</small></button>
-          <button class="btn" id="btnMoves"><span>Moves</span><small>Combos</small></button>
+          <button class="btn" id="btnArmory"><span>Store</span><small>Equipment &amp; styles</small></button>
+          <button class="btn" id="btnWardrobe"><span>Wardrobe</span><small>Your equipped look</small></button>
         </div>
         <div class="btn-row">
           <button class="btn" id="btnSettings"><span>Settings</span><small>Controls</small></button>
           <button class="btn" id="btnHomeMute"><span>Audio</span><small id="homeAudioState">ON</small></button>
         </div>
+        <button class="btn" id="btnMoves"><span>Moves &amp; Rules</span><small>Controls and scoring</small></button>
         <button class="btn" id="btnInstall" style="display:none;"><span>Install App</span><small>Play Offline</small></button>
       </div>
     </div>
@@ -1533,6 +1591,8 @@
           <button class="chip active" data-arena="sunset">Championship Arena</button>
           <button class="chip" data-arena="dojo">Cold Steel Gym</button>
           <button class="chip" data-arena="neon">Vegas Strip</button>
+          <button class="chip" data-arena="emerald">Emerald Coliseum</button>
+          <button class="chip" data-arena="ocean">Ocean Dome</button>
         </div>
       </div>
 
@@ -1551,14 +1611,17 @@
   <div id="armoryScreen" class="screen">
     <div class="modal-card">
       <div class="modal-head">
-        <h2>Gym Shop</h2>
+        <h2 id="armoryTitle">Store</h2>
         <div style="display:flex;align-items:center;gap:12px;">
           <span class="coins-badge" id="armoryCoins">0 Coins</span>
           <button class="hud-mini-btn" id="btnCloseArmory">BACK</button>
         </div>
       </div>
 
-      <div style="font-size:12px;font-weight:700;color:var(--muted);">WEAPONS</div>
+      <div class="shop-preview"><canvas id="fighterPreview" width="300" height="300" aria-label="Fighter equipment preview"></canvas><p><strong>FIGHTER PREVIEW</strong><br>See your equipped kit here. Hover or focus an item to try its look before purchase.</p></div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);">FIGHT SHOES</div>
+      <div class="grid-cards" id="shopShoes"></div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);">GLOVES</div>
       <div class="grid-cards" id="shopWeapons"></div>
 
       <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;">CORNER COLOUR &amp; TRUNK TRIM</div>
@@ -1580,17 +1643,19 @@
         <button class="hud-mini-btn" id="btnCloseMoves">CLOSE</button>
       </div>
       <div class="move-list">
-        <div class="move-item"><span>Jab &rarr; Cross &rarr; Finisher</span><span class="kbd">Jab, Jab, Power</span></div>
+        <div class="move-item"><span>Jab</span><span class="kbd">J</span></div>
+        <div class="move-item"><span>Uppercut</span><span class="kbd">K</span></div>
+        <div class="move-item"><span>Knee to the body</span><span class="kbd">L</span></div>
+        <div class="move-item"><span>Face block / duck</span><span class="kbd">Hold U / S</span></div>
+        <div class="move-item"><span>Skill move (full meter)</span><span class="kbd">I</span></div>
         <div class="move-item"><span>Step-in Straight</span><span class="kbd">Fwd + Jab</span></div>
         <div class="move-item"><span>Body Rip (beats high guard)</span><span class="kbd">Down + Hook</span></div>
-        <div class="move-item"><span>Uppercut</span><span class="kbd">Up + Power</span></div>
         <div class="move-item"><span>Duck under head shots</span><span class="kbd">Hold Down</span></div>
         <div class="move-item"><span>Shove out of the clinch</span><span class="kbd">Guard + Jab</span></div>
-        <div class="move-item"><span>K.O. Punch (full meter)</span><span class="kbd">Power when it glows</span></div>
-        <div class="move-item"><span>Button marks</span><span class="kbd">Dot Jab &middot; Ring Hook &middot; Red Power &middot; White Guard &middot; Bar Slip</span></div>
+        <div class="move-item"><span>Rules</span><span class="kbd">Knees to body allowed · no strikes while down · 3 knockdowns = TKO</span></div>
         <div class="move-item"><span>Desktop P1 Move</span><span class="kbd">W A S D</span></div>
-        <div class="move-item"><span>Desktop P1 Attacks</span><span class="kbd">J K L / U Blk / Spc Dash</span></div>
-        <div class="move-item"><span>Desktop 2P Keys</span><span class="kbd">Arrows + 1/2/3/4 (or UIOP)</span></div>
+        <div class="move-item"><span>Desktop P1 Attacks</span><span class="kbd">J Jab / K Upper / L Knee / I Skill</span></div>
+        <div class="move-item"><span>Desktop 2P Keys</span><span class="kbd">Arrows + 1 Jab / 2 Upper / 3 Knee / 4 Block / 6 Skill</span></div>
       </div>
     </div>
   </div>
@@ -1646,6 +1711,14 @@
     <button class="btn" id="btnResetTournament">RESET TOURNAMENT</button>
   </div></div>
 
+  <div id="champScene" class="screen"><div class="modal-card">
+    <div class="eyebrow">CHAMPIONSHIP NIGHT</div>
+    <canvas id="champCanvas" width="580" height="240" aria-label="Champion celebrating in the ring" style="width:100%;height:auto;border-radius:12px;"></canvas>
+    <h2 id="champHeadline">AND THE NEW...</h2><p id="champCaption">The crowd rises as the champion is crowned.</p>
+    <canvas id="champBelt" width="220" height="90" style="margin:auto;"></canvas>
+    <button class="btn btn-primary" id="btnSkipChamp">CONTINUE</button>
+  </div></div>
+
   <!-- PAUSE OVERLAY -->
   <div id="pauseScreen" class="screen">
     <div class="modal-card" style="max-width:380px;text-align:center;">
@@ -1699,8 +1772,8 @@
     HITSTOP_LIGHT: 3,
     HITSTOP_HEAVY: 6,
     MAX_JUGGLE: 2,
-    ROUND_TIME: 90,
-    ROUNDS_TO_WIN: 2,
+    ROUND_TIME: 120,
+    ROUNDS_TO_WIN: 1,
     MAX_HP: 100,
     MAX_STAMINA: 100,
     MAX_ENERGY: 100,
@@ -1712,7 +1785,7 @@
     AIR_ACCEL: 650,
     AIR_DRAG: 90,
     FIGHTER_SCALE: 1.8,
-    COUNT_FRAMES: 30        // frames per number of the referee's count
+    COUNT_FRAMES: 60        // one second per number of the referee's count
   };
 
   // Each character changes movement, resilience, impact and silhouette, not just its name.
@@ -1807,7 +1880,7 @@
     boots:  { id: 'boots',  name: 'Ring Boots',      cost: 160, desc: 'Move 8% faster around the ring.' },
     rope:   { id: 'rope',   name: 'Skipping Rope',   cost: 200, desc: 'Roadwork pays off: punches cost 25% less stamina.' },
     ice:    { id: 'ice',    name: 'Enswell & Ice',   cost: 220, desc: 'Shake off half of each punch instead of a third.' },
-    cutman: { id: 'cutman', name: 'Veteran Cutman',  cost: 240, desc: 'Recover 60% of lost health between rounds instead of 40%.' },
+    cutman: { id: 'cutman', name: 'Veteran Cutman',  cost: 240, desc: 'Reduce injuries after career bouts by 35%.' },
     lung:   { id: 'lung',   name: 'Altitude Training', cost: 290, desc: 'Improve stamina recovery after exchanges.' },
     core:   { id: 'core',   name: 'Core Conditioning', cost: 310, desc: 'Reduce body-shot fatigue buildup.' },
     reflex: { id: 'reflex', name: 'Reflex Training', cost: 340, desc: 'Slightly shorten recovery after blocked punches.' }
@@ -1839,6 +1912,14 @@
     goldankles: { id: 'goldankles',name: 'Gold Ankle Guards',      slot: 'ankles',cost: 245, color: '#e0b43c', desc: 'Gold ankle bands for a champion look.' }
   };
 
+  const SHOES = {
+    classic: { name: 'Classic White', cost: 0, colors: ['#dedfe5', '#ffffff', '#69717f'] },
+    midnight: { name: 'Midnight Pro', cost: 140, colors: ['#202938', '#8697aa', '#090e19'] },
+    crimson: { name: 'Crimson Speed', cost: 190, colors: ['#b51f36', '#ff94a1', '#54121d'] },
+    gold: { name: 'Champion Gold', cost: 280, colors: ['#bc8b23', '#ffe49b', '#583a0a'] },
+    electric: { name: 'Electric Blue', cost: 220, colors: ['#235bc5', '#a5d7ff', '#10264e'] }
+  };
+
   const ARENAS = {
     sunset: {
       id: 'sunset', name: 'Crimson Sunset',
@@ -1862,6 +1943,9 @@
       accent: '#38bdf8'
     }
   };
+
+  ARENAS.emerald = { ...ARENAS.dojo, id:'emerald', name:'Emerald Coliseum', accent:'#35e4a0' };
+  ARENAS.ocean = { ...ARENAS.dojo, id:'ocean', name:'Ocean Dome', accent:'#50bfff' };
 
   // Career ladders: five ranked contenders, then the division champion (boss: true).
   const LIGHTWEIGHT_LADDER = [
@@ -1917,6 +2001,7 @@
   // Attack frame data (at speed = 1.0, scaled by weapon speed)
   const MOVES = {
     // Boxing punch set (ids kept for input mapping). high: head shot that a ducking boxer slips under.
+    knee:         { startup: 10, active: 4, recovery: 19, dmg: 13, kbX: 180, kbY: 0, hitstun: 18, blkStun: 10, stamDmg: 22, range: 65, yOff: -80, h: 40, type: 'low', trail: 'footR' },
     punch:        { startup: 5,  active: 3, recovery: 8,  dmg: 5,  kbX: 150, kbY: 0,    hitstun: 12, blkStun: 8,  stamDmg: 10, range: 84,  yOff: -104, h: 34, type: 'light',  trail: 'handR', chainTo: 'punch2', high: true },         // jab
     punch2:       { startup: 6,  active: 4, recovery: 11, dmg: 9,  kbX: 230, kbY: 0,    hitstun: 16, blkStun: 10, stamDmg: 16, range: 88,  yOff: -104, h: 34, type: 'light',  trail: 'handL', chainTo: 'heavyFinisher', high: true },  // cross
     kick:         { startup: 8,  active: 4, recovery: 13, dmg: 12, kbX: 250, kbY: 0,    hitstun: 18, blkStun: 12, stamDmg: 22, range: 74,  yOff: -106, h: 36, type: 'medium', trail: 'handR', chainTo: 'heavyFinisher', high: true },  // lead hook
@@ -1955,6 +2040,9 @@
     gear: [],
     // Career: per-division progress, belts held, successful defences, and who took a lost belt.
     career: { division: 0, stage: [0, 0, 0], belts: [false, false, false], defences: [0, 0, 0], lostTo: [null, null, null] },
+    progression: { fights: 0, wins: 0, losses: 0, xp: 0, injury: 0 },
+    unlockedShoes: ['classic'],
+    equippedShoes: 'classic',
     tournamentStage: 0,
     tournamentWins: 0,
     tournamentTitles: 0,
@@ -1984,6 +2072,9 @@
         unlockedAccessories: Array.isArray(parsed.unlockedAccessories) ? parsed.unlockedAccessories : [],
         equippedAccessories: { ...defaultSave.equippedAccessories, ...(parsed.equippedAccessories || {}) },
         training: { ...defaultSave.training, ...(parsed.training || {}) },
+        progression: { ...defaultSave.progression, ...(parsed.progression || {}) },
+        unlockedShoes: Array.isArray(parsed.unlockedShoes) ? parsed.unlockedShoes : ['classic'],
+        equippedShoes: typeof parsed.equippedShoes === 'string' ? parsed.equippedShoes : 'classic',
         rivalries: { ...(parsed.rivalries || {}) },
         settings: { ...defaultSave.settings, ...(parsed.settings || {}) }
       };
@@ -2307,8 +2398,8 @@
       btn.classList.add('pressed');
       activeButtons.set(e.pointerId, { el: btn, act, p: 0 });
       haptic(12);
-      if (act === 'block') {
-        Input.players[0].block = true;
+      if (act === 'block' || act === 'duck') {
+        Input.players[0][act === 'duck' ? 'down' : act] = true;
       } else {
         bufferAction(0, act);
       }
@@ -2318,7 +2409,7 @@
       const info = activeButtons.get(e.pointerId);
       if (!info) return;
       info.el.classList.remove('pressed');
-      if (info.act === 'block') Input.players[0].block = false;
+      if (info.act === 'block' || info.act === 'duck') Input.players[0][info.act === 'duck' ? 'down' : info.act] = false;
       activeButtons.delete(e.pointerId);
     };
     btn.addEventListener('pointerup', release);
@@ -2338,8 +2429,8 @@
       activeButtons.set(e.pointerId, { el: btn, act, p: pIdx });
       haptic(10);
       const st = Input.players[pIdx];
-      if (act === 'left' || act === 'right' || act === 'down' || act === 'block') {
-        st[act] = true;
+      if (act === 'left' || act === 'right' || act === 'down' || act === 'duck' || act === 'block') {
+        st[act === 'duck' ? 'down' : act] = true;
       } else if (act === 'up') {
         st.up = true;
         bufferAction(pIdx, 'jump');
@@ -2352,8 +2443,8 @@
       if (!info) return;
       info.el.classList.remove('pressed');
       const st = Input.players[info.p];
-      if (info.act === 'left' || info.act === 'right' || info.act === 'up' || info.act === 'down' || info.act === 'block') {
-        st[info.act] = false;
+      if (info.act === 'left' || info.act === 'right' || info.act === 'up' || info.act === 'down' || info.act === 'duck' || info.act === 'block') {
+        st[info.act === 'duck' ? 'down' : info.act] = false;
       }
       activeButtons.delete(e.pointerId);
     };
@@ -2377,8 +2468,10 @@
     if (k === 'KeyS') Input.players[0].down = true;
     if (k === 'KeyW') { Input.players[0].up = true; bufferAction(0, 'jump'); }
     if (k === 'KeyJ' || k === 'KeyF') bufferAction(0, 'punch');
-    if (k === 'KeyK' || k === 'KeyG') bufferAction(0, 'kick');
-    if (k === 'KeyL' || k === 'KeyH') bufferAction(0, 'heavy');
+    if (k === 'KeyK') bufferAction(0, 'upper');
+    if (k === 'KeyG') bufferAction(0, 'kick');
+    if (k === 'KeyL') bufferAction(0, 'knee');
+    if (k === 'KeyH') bufferAction(0, 'heavy');
     if (k === 'KeyU' || k === 'ShiftLeft' || k === 'KeyR') Input.players[0].block = true;
     if (k === 'Space' || k === 'KeyV') bufferAction(0, 'dash');
     if (k === 'KeyI' || k === 'KeyO' || k === 'KeyT') bufferAction(0, 'special');
@@ -2390,8 +2483,10 @@
       if (k === 'ArrowDown') Input.players[1].down = true;
       if (k === 'ArrowUp') { Input.players[1].up = true; bufferAction(1, 'jump'); }
       if (k === 'Digit1' || k === 'Numpad1' || k === 'KeyN') bufferAction(1, 'punch');
-      if (k === 'Digit2' || k === 'Numpad2' || k === 'KeyM') bufferAction(1, 'kick');
-      if (k === 'Digit3' || k === 'Numpad3' || k === 'Comma') bufferAction(1, 'heavy');
+      if (k === 'Digit2' || k === 'Numpad2') bufferAction(1, 'upper');
+      if (k === 'KeyM') bufferAction(1, 'kick');
+      if (k === 'Digit3' || k === 'Numpad3') bufferAction(1, 'knee');
+      if (k === 'Comma') bufferAction(1, 'heavy');
       if (k === 'Digit4' || k === 'Numpad4' || k === 'Period') Input.players[1].block = true;
       if (k === 'Digit5' || k === 'Numpad5' || k === 'Slash') bufferAction(1, 'dash');
       if (k === 'Digit6' || k === 'Numpad6') bufferAction(1, 'special');
@@ -2460,6 +2555,7 @@
     heavyWind: { hipY: 10,  torso: -16, head: 4,  shL: -24, elL: -128,shR: 40,  elR: -120,hipL: -28, kneeL: 36, hipR: 26,  kneeR: 24 },
     heavyHit:  { hipY: 14,  torso: 36,  head: -18,shL: -20, elL: -125,shR: -104,elR: -10, hipL: -44, kneeL: 52, hipR: 42,  kneeR: 14 },   // overhand
     sweepHit:  { hipY: 24,  torso: 40,  head: -20,shL: -24, elL: -130,shR: -58, elR: -28, hipL: -40, kneeL: 60, hipR: 36,  kneeR: 30 },   // body rip
+    kneeHit:   { hipY: 0, torso: -8, head: -10, shL: -30, elL: -130, shR: -38, elR: -122, hipL: -20, kneeL: 28, hipR: -85, kneeR: 110 },
     upperHit:  { hipY: -6,  torso: 2,   head: -12,shL: -22, elL: -128,shR: -120,elR: -60, hipL: -26, kneeL: 30, hipR: 22,  kneeR: 18 },   // uppercut
     specHit:   { hipY: 12,  torso: 40,  head: -20,shL: 20,  elL: -60, shR: -100,elR: -2,  hipL: -48, kneeL: 56, hipR: 46,  kneeR: 12 }    // K.O. punch
   };
@@ -2501,6 +2597,7 @@
       characterId, character,
       weaponId, auraId, isAI, isBoss,
       accessories: (!isAI && idx === 0) ? { ...save.equippedAccessories } : {},
+      shoes: (!isAI && idx === 0) ? save.equippedShoes : 'classic',
       hp: character.maxHp, trailHp: character.maxHp,
       stamina: CFG.MAX_STAMINA,
       energy: 0,
@@ -2543,6 +2640,7 @@
       armor: !isAI && idx === 0 && save.gear.includes('guard') ? .92 : 1,
       cutman: !isAI && idx === 0 && save.gear.includes('cutman'),
       speedMul: !isAI && idx === 0 && save.gear.includes('boots') ? 1.08 : 1,
+      powerMul: 1,
       costMul: !isAI && idx === 0 && save.gear.includes('rope') ? .75 : 1,
       recMul: !isAI && idx === 0 && save.gear.includes('ice') ? .5 : .35,
       fallT: 0,          // 0 = on his feet, 1 = flat on the canvas (drives the fall / get-up blend)
@@ -2575,7 +2673,7 @@
     // Round 1 starts fresh; after that the corner can only patch a boxer up partially.
     const maxHp = f.character.maxHp, fresh = Game.roundNum <= 1;
     f.hp = fresh ? maxHp : Math.min(maxHp, f.hp + (maxHp - f.hp) * (f.cutman ? .6 : .4));
-    f.staminaCap = fresh ? CFG.MAX_STAMINA : Math.min(CFG.MAX_STAMINA, f.staminaCap + 15);
+    f.staminaCap = fresh ? f.staminaCap : Math.min(CFG.MAX_STAMINA, f.staminaCap + 15);
     f.recover = 0; f.lastHit = 0; f.points = 0; f.knockdowns = 0; f.countOut = false; f.tko = false;
     if (fresh) f.cut = 0;
     f.trailHp = f.hp; f.stamina = f.staminaCap;
@@ -2597,7 +2695,7 @@
   function getMoveFrames(f, move) {
     const w = WEAPONS[f.weaponId];
     const rageMul = f.ragePhase ? 1.18 : 1.0;
-    const spd = w.speed * rageMul * (0.85 + f.character.speed * 0.15) * (f.stamina < 18 ? .82 : 1);
+    const spd = w.speed * rageMul * (0.85 + f.character.speed * 0.15) * (f.handSpeedMul || 1) * (f.stamina < 18 ? .82 : 1);
     return {
       startup:  Math.max(3, Math.round(move.startup / spd)),
       active:   Math.max(3, Math.round(move.active)),
@@ -2610,6 +2708,7 @@
     if (!move) return;
     const cost = move.type === 'light' ? 5 : move.type === 'medium' || move.type === 'low' ? 8 :
       move.type === 'heavy' ? 14 : move.type === 'special' ? 20 : 9;
+    if (f.stamina < cost * f.costMul * .5) return;
     f.stamina = Math.max(0, f.stamina - cost * f.costMul);
     f.state = 'attack';
     f.moveName = moveName;
@@ -2649,7 +2748,7 @@
     if (f.state === 'attack' && f.moveName) {
       const m = MOVES[f.moveName];
       if (m.chainTo && f.moveFrame >= 4) {
-        if (m.chainTo === 'punch2' && consumeBuffered(f.idx, 'punch')) f.chainQueued = 'punch2';
+        if (m.chainTo === 'punch2' && consumeBuffered(f.idx, 'kick')) f.chainQueued = 'punch2';
         else if (m.chainTo === 'heavyFinisher' && consumeBuffered(f.idx, 'heavy')) f.chainQueued = 'heavyFinisher';
       }
       return;
@@ -2664,15 +2763,9 @@
 
     // Special Move
     // With a full meter the Power button throws the K.O. punch (Up + Power is still the uppercut).
-    if (f.energy >= CFG.MAX_ENERGY && f.grounded &&
-        (consumeBuffered(f.idx, 'special') || (!inp.up && consumeBuffered(f.idx, 'heavy')))) {
-      startAttack(f, 'special');
-      return;
-    }
-
-    // Block + Punch = reliable Throw on touchscreen & keyboard
-    if (inp.block && f.grounded && consumeBuffered(f.idx, 'punch')) {
-      startAttack(f, 'throw');
+    if (consumeBuffered(f.idx, 'special')) {
+      if (f.energy >= CFG.MAX_ENERGY && f.grounded) startAttack(f, 'special');
+      else if (!f.isAI) showToast('Land strikes to fill your skill meter');
       return;
     }
 
@@ -2712,18 +2805,19 @@
 
     // Ground Attacks + Throw + Directional Specials
     const closeDist = Math.abs(f.x - opp.x) < 76;
+    if (consumeBuffered(f.idx, 'upper')) { startAttack(f, 'upper'); return; }
+    if (consumeBuffered(f.idx, 'knee')) { startAttack(f, 'knee'); return; }
     const pBuf = consumeBuffered(f.idx, 'punch');
     const kBuf = consumeBuffered(f.idx, 'kick');
     const hBuf = consumeBuffered(f.idx, 'heavy');
 
     // Close-range Throw: Punch + Kick or Forward + Punch when opponent blocking very close
-    if ((pBuf && kBuf) || (pBuf && fwd && closeDist && opp.state === 'block')) {
+    if (pBuf && kBuf) {
       startAttack(f, 'throw');
       return;
     }
     if (pBuf) {
-      if (fwd && Math.abs(f.x - opp.x) > 74) startAttack(f, 'lunge');
-      else startAttack(f, 'punch');
+      startAttack(f, 'punch');
       return;
     }
     if (kBuf) {
@@ -3053,8 +3147,8 @@
     const sweetSpot = move.range * w.range * .72;
     const rangeQuality = distance <= sweetSpot ? 1 : Math.max(.72, 1 - (distance - sweetSpot) / Math.max(1, move.range * .95));
     const drive = Math.min(1.18, .88 + Math.max(0, att.vx * att.facing) / 1500);
-    const dmg = Math.round(move.dmg * w.dmgMul * att.character.power * fatigue * rangeQuality * drive * .74 * def.armor * (att.powerMul || 1) *
-      (counter ? 1.3 : 1) * (att.ragePhase ? 1.15 : 1));
+    const dmg = Math.max(1, Math.round(move.dmg * w.dmgMul * att.character.power * fatigue * rangeQuality * drive * .43 * def.armor * (att.powerMul || 1) *
+      (counter ? 1.3 : 1) * (att.ragePhase ? 1.15 : 1)));
     if (counter) spawnDmgText(def.x, def.y - 172 * CFG.FIGHTER_SCALE, 'COUNTER!', '#ffffff', 1.1);
     def.hp = Math.max(0, def.hp - dmg);
     def.recover = Math.min(def.recover + dmg * def.recMul, def.character.maxHp - def.hp);   // about a third can be shaken off
@@ -3121,7 +3215,7 @@
       def.vy = -300 / Math.sqrt(def.character.mass);
       def.grounded = false;
       triggerRoundKO(att, def);
-    } else if (move.knockdown || (isHeavy && move.type !== 'throw' && (def.hp < def.character.maxHp * .25 || def.balance <= 0))) {
+    } else if (isHeavy && move.type !== 'throw' && (def.hp < def.character.maxHp * .25 || def.balance <= 0)) {
       // Knockdown: the more hurt he is, the longer he stays down for the count (2 to 7).
       def.state = 'knockdown';
       def.downFrames = 0;
@@ -3704,7 +3798,7 @@
     bgFarCache.width = W; bgFarCache.height = CFG.WORLD_H;
     bgMidCache.width = W; bgMidCache.height = G;
     bgFloorCache.width = W; bgFloorCache.height = FH;
-    const tint = arenaId === 'dojo' ? '205,205,205' : arenaId === 'neon' ? '255,70,70' : '255,255,255';
+    const tint = ({ dojo:'160,190,255', neon:'255,70,185', emerald:'64,242,154', ocean:'65,180,255', sunset:'255,183,100' })[arenaId] || '255,255,255';
     const rng = seededRandom(arenaId.length * 977 + 5);
 
     // FAR: dark arena bowl, lighting truss, spotlight beams and tiered crowd.
@@ -3747,7 +3841,8 @@
     strip.addColorStop(0, '#dcdcdc'); strip.addColorStop(1, '#c6c6c6');
     cm.fillStyle = strip; cm.fillRect(0, edge, W, 30);
     cm.fillStyle = 'rgba(0,0,0,.45)'; cm.fillRect(0, edge - 2, W, 3);
-    const ropeC = ['#e10613', '#f2f2f2', '#e10613', '#f2f2f2'];
+    const ropeAccent = ({dojo:'#789ac9',neon:'#ed43aa',emerald:'#21bd83',ocean:'#2a9bdb',sunset:'#e65c33'})[arenaId] || '#e10613';
+    const ropeC = [ropeAccent, '#f2f2f2', ropeAccent, '#f2f2f2'];
     for (let i = 0; i < 4; i++) {
       const y = edge - 138 + i * 34;
       cm.strokeStyle = 'rgba(0,0,0,.5)'; cm.lineWidth = 6;
@@ -3770,7 +3865,7 @@
     // FLOOR: lit canvas with centre logo, then the ring apron.
     const cg = bgFloorCtx, matH = FH * .56;
     const mat = cg.createLinearGradient(0, 0, 0, matH);
-    mat.addColorStop(0, '#c6c6c6'); mat.addColorStop(1, '#7e7e7e');
+    mat.addColorStop(0, ({emerald:'#a7d6c5',ocean:'#a7cce3',neon:'#d0acd7',dojo:'#c3cbd9',sunset:'#e4c5aa'})[arenaId] || '#c6c6c6'); mat.addColorStop(1, '#6e7587');
     cg.fillStyle = mat; cg.fillRect(0, 0, W, matH);
     const pool = cg.createRadialGradient(W * .5, 0, 20, W * .5, 0, 520);
     pool.addColorStop(0, 'rgba(255,255,255,.3)'); pool.addColorStop(1, 'rgba(255,255,255,0)');
@@ -3922,17 +4017,22 @@
     c.restore();
   }
 
-  function drawLeg(c, hx, hy, kx, ky, fx, fy, dir, skin, trunks, seed, down) {
+  function drawLeg(c, hx, hy, kx, ky, fx, fy, dir, skin, trunks, seed, down, shoe) {
+    const boot = (SHOES[shoe] || SHOES.classic).colors;
     sketchLimb(c, hx, hy, kx, ky, 9.6, 6.6, skin, seed);
     sketchLimb(c, kx, ky, fx, fy, 6.4, 4.6, skin, seed + 1);
     sketchLimb(c, hx, hy, hx + (kx - hx) * .62, hy + (ky - hy) * .62, 11, 10.6, trunks, seed + 2);   // trunk leg
-    sketchLimb(c, kx + (fx - kx) * .5, ky + (fy - ky) * .5, fx, fy, 5.4, 5, BOOT, seed + 3);         // high-top boot
-    c.fillStyle = BOOT[0];
+    sketchLimb(c, kx + (fx - kx) * .5, ky + (fy - ky) * .5, fx, fy, 5.4, 5, boot, seed + 3);         // high-top boot
+    c.fillStyle = boot[0];
     c.beginPath();
     if (down) c.ellipse(fx, fy - 5, 4, 8, 0, 0, Math.PI * 2);
     else c.ellipse(fx + dir * 5, fy - 2.5, 9, 4, 0, 0, Math.PI * 2);
     c.fill();
-    if (!down) { c.fillStyle = '#16110f'; c.fillRect(fx + dir * 5 - 9, fy, 18, 1.6); }
+    if (!down) {
+      c.fillStyle = boot[2]; c.fillRect(fx + dir * 5 - 9, fy, 18, 2);
+      c.strokeStyle = boot[1]; c.lineWidth = .9;
+      for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(fx - 3, fy - 6 - i * 3); c.lineTo(fx + 3, fy - 6 - i * 3); c.stroke(); }
+    }
   }
 
   function setJoint(f, key, x, y) {
@@ -4093,7 +4193,7 @@
     sketchLimb(c, shX, shY, elLX, elLY, 6.8, 5.4, skin, boil + 1);
     sketchLimb(c, elLX, elLY, handLX, handLY, 5.4, 4.4, skin, boil + 2);
     drawGlove(c, elLX, elLY, handLX, handLY, glove, boil + 3);
-    drawLeg(c, hipX, hipY, kneeLX, kneeLY, footLX, footLY, dir, skin, trunks, boil + 4, down);
+    drawLeg(c, hipX, hipY, kneeLX, kneeLY, footLX, footLY, dir, skin, trunks, boil + 4, down, f.shoes);
 
     // ---- Torso: lats taper to the waist; sketched chest, ribs and abs ----
     c.save(); c.translate(hipX, hipY); c.rotate(torsoA + Math.PI / 2);
@@ -4225,7 +4325,7 @@
     }
 
     // ---- Near leg and near arm ----
-    drawLeg(c, hipX, hipY, kneeRX, kneeRY, footRX, footRY, dir, skin, trunks, boil + 12, down);
+    drawLeg(c, hipX, hipY, kneeRX, kneeRY, footRX, footRY, dir, skin, trunks, boil + 12, down, f.shoes);
     sketchLimb(c, shX, shY, elRX, elRY, 7.4, 5.8, skin, boil + 16);
     sketchLimb(c, elRX, elRY, handRX, handRY, 5.8, 4.7, skin, boil + 17);
     if (f.energy >= CFG.MAX_ENERGY) { c.shadowColor = trim; c.shadowBlur = 12; }   // K.O. punch ready
@@ -4366,6 +4466,7 @@
       if (f.moveName === 'kick' || f.moveName === 'airKick') target = isWind ? POSES.kickWind : POSES.kickHit;
       else if (f.moveName === 'sweep') target = isWind ? POSES.crouch : POSES.sweepHit;
       else if (f.moveName === 'upper') target = isWind ? POSES.crouch : POSES.upperHit;
+      else if (f.moveName === 'knee') target = isWind ? POSES.idle : POSES.kneeHit;
       else if (f.moveName === 'heavy' || f.moveName === 'heavyFinisher' || f.moveName === 'bossShock') target = isWind ? POSES.heavyWind : POSES.heavyHit;
       else if (f.moveName === 'special' || f.moveName === 'lunge') target = isWind ? POSES.heavyWind : POSES.specHit;
       else target = isWind ? POSES.punchWind : f.moveName === 'punch2' ? POSES.punch2Hit : POSES.punchHit;
@@ -4928,13 +5029,15 @@
   function startMatch() {
     clearInputs();
     Game.state = 'fight';
+    document.getElementById('app').classList.add('playing');
+    if (screen.orientation && typeof screen.orientation.lock === 'function') screen.orientation.lock('landscape').catch(() => {});
     Game.roundNum = 1;
     Game.hitstop = 0;
     Game.shake = 0;
     Game.timeScale = 1;
 
     for (let i = 0; i < stains.length; i++) stains[i].a = 0;   // fresh canvas for a new fight
-    CFG.ROUNDS_TO_WIN = 2;            // three-round bout unless a title is on the line
+    CFG.ROUNDS_TO_WIN = 1;            // one two-minute bout, with stoppages possible
     Game.cards = [0, 0];              // judges' totals
     Game.koWin = false; Game.tkoWin = false; Game.bout = null;
 
@@ -4963,18 +5066,18 @@
       }
       // Division physics: lighter men are quicker, heavier men hit harder.
       Game.p1.speedMul *= dv.speed; Game.p2.speedMul *= dv.speed;
-      Game.p1.powerMul = Game.p2.powerMul = dv.power;
+      Game.p1.powerMul *= dv.power; Game.p2.powerMul *= dv.power;
       // Whoever holds the belt wears it into the ring; title fights are scheduled for five rounds.
       Game.p1.belt = !!stage.defence;
       Game.p2.belt = !!stage.titleFight && !stage.defence;
-      CFG.ROUNDS_TO_WIN = stage.titleFight ? 3 : 2;
+      CFG.ROUNDS_TO_WIN = 1;
     } else if (Game.mode === 'tournament') {
       const stageIndex = Math.min(6, save.tournamentStage || 0);
       const opponentId = TOURNAMENT_OPPONENTS[stageIndex];
       const opponent = CHARACTERS[opponentId];
       Game.opponentCharacter = opponentId;
       Game.difficulty = stageIndex < 2 ? 'normal' : stageIndex < 4 ? 'hard' : 'nightmare';
-      Game.arena = ['sunset','dojo','neon','temple','sunset','dojo','neon'][stageIndex];
+      Game.arena = ['sunset','dojo','neon','emerald','sunset','ocean','neon'][stageIndex];
       Game.p1 = createFighter(0, hero.name, 330, 1, save.equippedWeapon, save.equippedAura, false, false, heroId);
       Game.p2 = createFighter(1, opponent.name, 790, -1, 'unarmed', 'crimson', true, stageIndex === 6, opponentId);
       const tier = stageIndex;
@@ -4991,9 +5094,14 @@
       Game.p2 = createFighter(1, opponent.name, 790, -1, signature[Game.opponentCharacter] || 'sword', 'crimson', true, Game.opponentCharacter === 'kuro', Game.opponentCharacter);
     }
 
-    // Permanent gym disciplines apply to the player's fighter in every solo mode.
+    // Permanent gym disciplines and fight experience apply in solo modes.
     if (Game.mode !== '2p') {
       const tr = save.training || {};
+      const rating = getRatings();
+      Game.p1.powerMul *= 1 + (rating.power - 60) * .004;
+      Game.p1.handSpeedMul = 1 + (rating.speed - 60) * .002;
+      Game.p1.regenMul *= 1 + (rating.stamina - 60) * .005;
+      Game.p1.armor *= 1 - (rating.defence - 60) * .002;
       Game.p1.powerMul *= 1 + (tr.power || 0) * .035;
       Game.p1.speedMul *= 1 + (tr.speed || 0) * .025;
       Game.p1.staminaCap = Math.min(120, Game.p1.staminaCap + (tr.conditioning || 0) * 3);
@@ -5001,6 +5109,9 @@
       Game.p1.balance = Math.min(100, (Game.p1.balance || 100) + (tr.defence || 0) * 2);
       Game.p1.balanceRegenMul = 1 + (tr.defence || 0) * .08;
       Game.p1.regenMul *= 1 + (tr.conditioning || 0) * .06;
+    }
+    if (Game.mode === 'story' && save.progression.injury > 0) {
+      Game.p1.character = { ...Game.p1.character, maxHp: Math.max(45, Math.round(Game.p1.character.maxHp * (1 - save.progression.injury / 100))) };
     }
     document.getElementById('p1Name').textContent = Game.p1.name;
     document.getElementById('p2Name').textContent = Game.p2.name;
@@ -5058,7 +5169,7 @@
     Game.phaseTimer = 2.0;
     const p1 = Game.p1, p2 = Game.p2;
     // The bell: judges score the round 10-9 on clean punches landed and knockdowns.
-    const rw = p1.points >= p2.points ? p1 : p2;
+    const rw = p1.points === p2.points ? (p1.hp / p1.character.maxHp >= p2.hp / p2.character.maxHp ? p1 : p2) : (p1.points > p2.points ? p1 : p2);
     rw.roundsWon++;
     const rl = rw === p1 ? p2 : p1;                      // ten-point must: 10-9, less a point per knockdown
     Game.cards[rw.idx] += 10;
@@ -5071,6 +5182,8 @@
   function finishMatch() {
     Game.roundPhase = 'over';
     Game.state = 'result';
+    document.getElementById('app').classList.remove('playing');
+    if (screen.orientation && typeof screen.orientation.unlock === 'function') screen.orientation.unlock();
     Game.timeScale = 1;
     hideBanner();
     document.getElementById('touchControls').style.display = 'none';
@@ -5129,6 +5242,13 @@
     }
 
     if (Game.mode !== '2p') {
+      const prog = save.progression;
+      prog.fights++; prog[p1Won ? 'wins' : 'losses']++;
+      prog.xp += p1Won ? 120 : 70;
+      if (Game.mode === 'story') {
+        const damage = 1 - Game.p1.hp / Game.p1.character.maxHp;
+        prog.injury = Math.min(35, Math.max(0, Math.round((prog.injury * .5 + damage * 18 + Game.p1.cut * 2) * (Game.p1.cutman ? .65 : 1))));
+      }
       const rivalName = Game.p2.name;
       const record = save.rivalries[rivalName] || { wins:0, losses:0, fights:0 };
       record.fights++;
@@ -5141,8 +5261,53 @@
     refreshHomeStats();
     document.getElementById('resCoins').textContent = `+${reward} Coins`;
     document.getElementById('resTotalCoins').textContent = `${save.coins} Coins`;
+    const championship = p1Won && ((Game.mode === 'story' && Game.bout && Game.bout.titleFight) || (Game.mode === 'tournament' && save.tournamentStage >= 7));
+    if (championship) startChampionshipScene();
+    else showScreen('resultScreen');
+  }
+
+  let champTimer, champEndTimer, champFrame;
+  function endChampionshipScene() {
+    clearTimeout(champTimer); clearTimeout(champEndTimer); cancelAnimationFrame(champFrame);
     showScreen('resultScreen');
   }
+  function startChampionshipScene() {
+    const headline = document.getElementById('champHeadline');
+    const caption = document.getElementById('champCaption');
+    headline.textContent = 'THE FINAL BELL';
+    caption.textContent = `${Game.p1.name} has conquered ${Game.p2.name}.`;
+    drawBeltIcon(document.getElementById('champBelt'), '#e8bd4e');
+    const canvas = document.getElementById('champCanvas'), c = canvas.getContext('2d');
+    const actor = createFighter(0, Game.p1.name, 322, 1, save.equippedWeapon, save.equippedAura, false, false, Game.p1.characterId);
+    actor.state = 'victory';
+    showScreen('champScene');
+    clearTimeout(champTimer); clearTimeout(champEndTimer); cancelAnimationFrame(champFrame);
+    const started = performance.now();
+    function animate(now) {
+      const elapsed = (now - started) / 1000;
+      const glow = c.createLinearGradient(0,0,0,240);
+      glow.addColorStop(0,'#171c43'); glow.addColorStop(1,'#8d472c');
+      c.fillStyle=glow; c.fillRect(0,0,580,240);
+      c.fillStyle='rgba(255,218,132,.13)';
+      for (let x=50;x<580;x+=120) { c.beginPath(); c.moveTo(x,0); c.lineTo(x+90,220); c.lineTo(x-90,220); c.closePath(); c.fill(); }
+      c.strokeStyle='#ffc861'; c.lineWidth=4;
+      for (let y=100;y<=170;y+=35) { c.beginPath(); c.moveTo(0,y); c.lineTo(580,y); c.stroke(); }
+      c.fillStyle='#d0c2ae'; c.fillRect(0,210,580,30);
+      actor.animTime=elapsed; updateFighterPose(actor);
+      c.save(); c.translate(0,-245); c.scale(.9,.9); drawBoxer(c,actor); c.restore();
+      if (elapsed > 1.6) {
+        for (let i=0;i<30;i++) { c.fillStyle=['#ffd36c','#ff668c','#78caff'][i%3]; c.fillRect((i*83)%580,(i*37+elapsed*30)%210,5,7); }
+      }
+      champFrame=requestAnimationFrame(animate);
+    }
+    champFrame=requestAnimationFrame(animate);
+    champTimer = setTimeout(() => {
+      headline.textContent = Game.bout && Game.bout.defence ? 'AND STILL THE CHAMPION!' : 'AND THE NEW CHAMPION!';
+      caption.textContent = `${Game.p1.name} raises the title as the crowd celebrates.`;
+    }, 1600);
+    champEndTimer = setTimeout(endChampionshipScene, 7000);
+  }
+  document.getElementById('btnSkipChamp').onclick = endChampionshipScene;
 
   function updatePips() {
     // One marker per round needed to win (two normally, three in a title fight).
@@ -5162,8 +5327,8 @@
     document.getElementById('p2HpFill').style.width = `${p2.hp / p2.character.maxHp * 100}%`;
     document.getElementById('p2HpTrail').style.width = `${p2.trailHp / p2.character.maxHp * 100}%`;
 
-    document.getElementById('p1Stam').style.width = `${p1.stamina}%`;
-    document.getElementById('p2Stam').style.width = `${p2.stamina}%`;
+    document.getElementById('p1Stam').style.width = `${Math.min(100, p1.stamina / p1.staminaCap * 100)}%`;
+    document.getElementById('p2Stam').style.width = `${Math.min(100, p2.stamina / p2.staminaCap * 100)}%`;
 
     const e1 = document.getElementById('p1Energy');
     e1.style.width = `${p1.energy}%`;
@@ -5173,10 +5338,11 @@
     e2.style.width = `${p2.energy}%`;
     e2.classList.toggle('ready', p2.energy >= CFG.MAX_ENERGY);
 
-    const specBtn = document.querySelector('.btn-heavy');   // Power glows when the K.O. punch is ready
+    const specBtn = document.querySelector('.btn-spec');
     if (specBtn) specBtn.classList.toggle('ready', p1.energy >= CFG.MAX_ENERGY);
 
-    document.getElementById('timerDisplay').textContent = Math.max(0, Math.ceil(Game.roundTimer));
+    const seconds = Math.max(0, Math.ceil(Game.roundTimer));
+    document.getElementById('timerDisplay').textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 
     const c1 = document.getElementById('p1Combo');
     if (p1.comboCount >= 2 && p1.comboTimer > 0) {
@@ -5316,9 +5482,10 @@
     // Scale world (1120 x 600) cleanly to fill screen on any aspect ratio
     const scaleX = viewW / CFG.WORLD_W;
     const scaleY = viewH / CFG.WORLD_H;
-    const scale = Math.max(scaleX, scaleY);
+    const portrait = viewW < viewH;
+    const scale = portrait ? scaleX : Math.max(scaleX, scaleY);
     const offX = (viewW - CFG.WORLD_W * scale) * 0.5;
-    const offY = viewH - CFG.WORLD_H * scale; // anchor ground nicely near bottom
+    const offY = portrait ? viewH * .62 - CFG.WORLD_H * scale : viewH - CFG.WORLD_H * scale;
 
     const sx = Game.shake ? (Math.random() - 0.5) * Game.shake : 0;
     const sy = Game.shake ? (Math.random() - 0.5) * Game.shake : 0;
@@ -5384,6 +5551,20 @@
     }
     ctx.globalAlpha = 1; ctx.shadowBlur = 0;
 
+    // Referee watches from the far side and raises an arm during a count or stoppage.
+    ctx.save();
+    const refX = Math.max(180, Math.min(940, (Game.p1.x + Game.p2.x) * .5 + 180));
+    const refY = CFG.GROUND_Y - 18;
+    ctx.translate(refX, refY); ctx.globalAlpha = .85;
+    ctx.fillStyle = '#1b2331'; ctx.fillRect(-21,-105,42,52);
+    ctx.fillStyle = '#b8c8da'; ctx.fillRect(-18,-105,36,38);
+    ctx.fillStyle = '#1b2331'; ctx.fillRect(-15,-54,11,49); ctx.fillRect(5,-54,11,49);
+    ctx.fillStyle = '#ba8c70'; ctx.beginPath(); ctx.arc(0,-116,12,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#b8c8da'; ctx.lineWidth = 9; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-18,-98); ctx.lineTo(-29,-65); ctx.moveTo(18,-98);
+    const counting = Game.p1.state === 'knockdown' || Game.p2.state === 'knockdown' || Game.roundPhase === 'ko';
+    ctx.lineTo(counting ? 37 : 30, counting ? -128 : -65); ctx.stroke(); ctx.restore();
+
     // Draw boxers: whoever is on the canvas is drawn last so he lies in front.
     // Blood stains soaked into the canvas (flattened by perspective).
     ctx.fillStyle = '#6e0a0e';
@@ -5397,8 +5578,8 @@
 
     const p1Down = Game.p1.state === 'knockdown' || Game.p1.state === 'death';
 
-    drawPixelBoxer(ctx, p1Down ? Game.p2 : Game.p1);
-    drawPixelBoxer(ctx, p1Down ? Game.p1 : Game.p2);
+    drawBoxer(ctx, p1Down ? Game.p2 : Game.p1);
+    drawBoxer(ctx, p1Down ? Game.p1 : Game.p2);
 
     // Near-side ropes, corner posts and press row in front of the action.
     ctx.drawImage(bgFrontCache, -80 - camDelta * 0.16, 0);
@@ -5468,7 +5649,7 @@
      12. MENUS, SHOP & NAVIGATION WIRING
      ========================================================================== */
   /* ---- Drawn pictures: boxer portraits for the fight card, item images for the shop ---- */
-  const ARENA_NAMES = { sunset: 'Championship Arena', dojo: 'Cold Steel Gym', neon: 'Vegas Strip' };
+  const ARENA_NAMES = { sunset: 'Championship Arena', dojo: 'Cold Steel Gym', neon: 'Vegas Strip', emerald: 'Emerald Coliseum', ocean: 'Ocean Dome' };
 
   function drawPortrait(cv, charId) {
     const ch = CHARACTERS[charId] || CHARACTERS.shadow, skin = SKINS[ch.skin] || SKINS.brown;
@@ -5673,6 +5854,17 @@
   }
 
   // Title Run page: tale of the tape for the next fight plus the rankings ladder.
+  function getRatings() {
+    const level = Math.min(30, Math.floor((save.progression.xp || 0) / 120));
+    const tr = save.training;
+    return {
+      power: Math.min(99, 60 + level + (tr.power || 0) * 3),
+      speed: Math.min(99, 60 + level + (tr.speed || 0) * 3),
+      stamina: Math.min(99, 60 + level + (tr.conditioning || 0) * 3),
+      defence: Math.min(99, 60 + level + (tr.defence || 0) * 3)
+    };
+  }
+
   function renderFightCard() {
     const wrap = document.getElementById('ladderWrap');
     const cr = save.career, dNow = cr.division, dv = DIVISIONS[dNow], ladder = dv.ladder, total = ladder.length;
@@ -5689,6 +5881,12 @@
     const me = CHARACTERS[heroId], opp = CHARACTERS[st.character];
     const row = (label, a, b) => `<div class="fc-row"><b>${a}</b><span>${label}</span><b>${b}</b></div>`;
     wrap.innerHTML = `
+      <div class="career-progress"><b>FIGHTER RATING ${Math.round(Object.values(getRatings()).reduce((a,b)=>a+b,0)/4)}</b>
+        <span>${save.progression.wins}W – ${save.progression.losses}L · ${save.progression.xp} XP</span>
+        <span>${Object.entries(getRatings()).map(([name,value]) => `${name.toUpperCase()} ${value}`).join(' · ')}</span>
+        <span>Injury: ${save.progression.injury}% health reduction next career fight</span>
+        ${save.progression.injury ? '<button type="button" class="chip" id="btnRecover">REST &amp; RECOVER</button>' : ''}
+      </div>
       <div class="fc-divs">${tabs}</div>
       <div class="fc-head"><span>${dv.name} Division · ${dv.belt}</span><b>${status}</b></div>
       <div class="fc-meta" style="margin-top:8px;padding:10px 12px;border:1px solid rgba(225,6,19,.55);border-radius:8px;background:linear-gradient(110deg,rgba(225,6,19,.18),rgba(12,12,14,.92));display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
@@ -5725,6 +5923,8 @@
           <u>${i < idx ? 'Beaten' : i === idx ? 'Next fight' : 'Locked'}</u>
         </li>`).reverse().join('')}</ol>`;
     wrap.querySelectorAll('canvas').forEach(cv => drawPortrait(cv, cv.dataset.char));
+    const recover = document.getElementById('btnRecover');
+    if (recover) recover.onclick = () => { save.progression.injury = 0; persistSave(); renderFightCard(); showToast('Rest complete. You are ready to fight.'); };
     // Division tabs: you move up a weight class by winning the belt below it.
     wrap.querySelectorAll('.fc-div').forEach(btn => {
       btn.onclick = () => {
@@ -5817,12 +6017,46 @@
     });
   }
 
+  function renderFighterPreview(tryOn = {}) {
+    const canvas = document.getElementById('fighterPreview'), c = canvas.getContext('2d');
+    const id = CHARACTERS[save.selectedCharacter] ? save.selectedCharacter : 'shadow';
+    const fighter = createFighter(0, CHARACTERS[id].name, 130, 1, tryOn.weapon || save.equippedWeapon, tryOn.aura || save.equippedAura, false, false, id);
+    fighter.shoes = tryOn.shoes || save.equippedShoes;
+    if (tryOn.accessory) fighter.accessories[tryOn.accessory.slot] = tryOn.accessory.id;
+    c.clearRect(0,0,canvas.width,canvas.height); c.save(); c.translate(0,-300); c.scale(1.15,1.15); drawBoxer(c, fighter); c.restore();
+  }
+  function renderShoes() {
+    const host = document.getElementById('shopShoes'); host.innerHTML = '';
+    Object.entries(SHOES).forEach(([id, shoe]) => {
+      const owned = save.unlockedShoes.includes(id);
+      if (wardrobeOnly && !owned) return;
+      const card = document.createElement('button'); card.type = 'button'; card.className = 'select-card';
+      card.innerHTML = `<canvas class="item-img" width="160" height="110"></canvas><h4>${shoe.name}</h4><p>${save.equippedShoes === id ? 'EQUIPPED' : owned ? 'EQUIP' : shoe.cost + ' Coins'}</p>`;
+      const c = card.querySelector('canvas').getContext('2d');
+      c.fillStyle = shoe.colors[0]; c.beginPath(); c.moveTo(47,22); c.lineTo(89,22); c.lineTo(91,62); c.quadraticCurveTo(100,70,124,76); c.lineTo(124,88); c.lineTo(40,88); c.closePath(); c.fill();
+      c.fillStyle = shoe.colors[2]; c.fillRect(40,86,84,5); c.strokeStyle = shoe.colors[1]; c.lineWidth = 3;
+      for (let y=35;y<65;y+=8) { c.beginPath(); c.moveTo(56,y); c.lineTo(81,y); c.stroke(); }
+      card.onmouseenter = card.onfocus = () => renderFighterPreview({shoes:id});
+      card.onmouseleave = card.onblur = () => renderFighterPreview();
+      card.onclick = () => {
+        if (!owned && save.coins < shoe.cost) { showToast(`Need ${shoe.cost - save.coins} more coins!`); return; }
+        if (!owned) { save.coins -= shoe.cost; save.unlockedShoes.push(id); }
+        save.equippedShoes = id; persistSave(); renderArmory(); refreshHomeStats();
+      };
+      host.appendChild(card);
+    });
+  }
+  let wardrobeOnly = false;
   function renderArmory() {
+    document.getElementById('armoryTitle').textContent = wardrobeOnly ? 'Wardrobe' : 'Store';
+    renderFighterPreview();
+    renderShoes();
     document.getElementById('armoryCoins').textContent = `${save.coins} Coins`;
     const wGrid = document.getElementById('shopWeapons');
     wGrid.innerHTML = '';
     Object.values(WEAPONS).forEach(w => {
       const owned = save.unlockedWeapons.includes(w.id);
+      if (wardrobeOnly && !owned) return;
       const eq = save.equippedWeapon === w.id;
       const card = document.createElement('div');
       card.className = `select-card ${eq ? 'selected' : ''}`;
@@ -5849,6 +6083,10 @@
         renderArmory();
         refreshHomeStats();
       });
+      card.tabIndex = 0; card.setAttribute('role', 'button');
+      card.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } };
+      card.onmouseenter = card.onfocus = () => renderFighterPreview({weapon:w.id});
+      card.onmouseleave = card.onblur = () => renderFighterPreview();
       drawGloveIcon(card.querySelector('canvas'), w.glove);
       wGrid.appendChild(card);
     });
@@ -5857,6 +6095,7 @@
     aGrid.innerHTML = '';
     Object.values(AURAS).forEach(a => {
       const owned = save.unlockedAuras.includes(a.id);
+      if (wardrobeOnly && !owned) return;
       const eq = save.equippedAura === a.id;
       const card = document.createElement('div');
       card.className = `select-card ${eq ? 'selected' : ''}`;
@@ -5882,6 +6121,10 @@
         Game.p1.auraId = save.equippedAura;
         renderArmory();
       });
+      card.tabIndex = 0; card.setAttribute('role', 'button');
+      card.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } };
+      card.onmouseenter = card.onfocus = () => renderFighterPreview({aura:a.id});
+      card.onmouseleave = card.onblur = () => renderFighterPreview();
       drawTrunksIcon(card.querySelector('canvas'), a.color);
       aGrid.appendChild(card);
     });
@@ -5891,6 +6134,7 @@
     xGrid.innerHTML = '';
     Object.values(ACCESSORIES).forEach(a => {
       const owned = save.unlockedAccessories.includes(a.id);
+      if (wardrobeOnly && !owned) return;
       const eq = save.equippedAccessories[a.slot] === a.id;
       const card = document.createElement('div');
       card.className = `select-card ${eq ? 'selected' : ''}`;
@@ -5915,6 +6159,10 @@
         if (Game.p1) Game.p1.accessories = { ...save.equippedAccessories };
         renderArmory(); refreshHomeStats();
       });
+      card.tabIndex = 0; card.setAttribute('role', 'button');
+      card.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } };
+      card.onmouseenter = card.onfocus = () => renderFighterPreview({accessory:a});
+      card.onmouseleave = card.onblur = () => renderFighterPreview();
       const cv = card.querySelector('canvas'), c = cv.getContext('2d');
       c.clearRect(0, 0, cv.width, cv.height); c.strokeStyle = a.color; c.fillStyle = a.color; c.lineWidth = 8; c.lineCap = 'round';
       if (a.slot === 'head') { c.beginPath(); c.arc(80, 60, 30, Math.PI * 1.12, Math.PI * 1.88); c.stroke(); c.fillRect(48, 48, 8, 12); }
@@ -5930,6 +6178,7 @@
     gGrid.innerHTML = '';
     Object.values(GEAR).forEach(g => {
       const owned = save.gear.includes(g.id);
+      if (wardrobeOnly && !owned) return;
       const card = document.createElement('div');
       card.className = `select-card ${owned ? 'selected' : ''}`;
       card.innerHTML = `
@@ -5991,6 +6240,8 @@
   function returnHome() {
     clearInputs();
     Game.state = 'home';
+    document.getElementById('app').classList.remove('playing');
+    if (screen.orientation && typeof screen.orientation.unlock === 'function') screen.orientation.unlock();
     Game.timeScale = 1;
     hideBanner();
     document.getElementById('hud').style.display = 'none';
@@ -6011,7 +6262,8 @@
   document.getElementById('btnTraining').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); renderTraining(); showScreen('trainingScreen'); };
   document.getElementById('btnHall').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); renderHallOfFame(); showScreen('hallScreen'); };
   document.getElementById('btnLocal2P').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); openSetup('2p'); };
-  document.getElementById('btnArmory').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); renderArmory(); showScreen('armoryScreen'); };
+  document.getElementById('btnArmory').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); wardrobeOnly = false; renderArmory(); showScreen('armoryScreen'); };
+  document.getElementById('btnWardrobe').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); wardrobeOnly = true; renderArmory(); showScreen('armoryScreen'); };
   document.getElementById('btnMoves').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); showScreen('movesScreen'); };
   document.getElementById('btnSettings').onclick = () => { AudioSys.unlock(); AudioSys.playUI(); showScreen('settingsScreen'); };
 
